@@ -2,7 +2,7 @@
 
 ## Overview
 
-Welcome to our Train-Problem DSA project! This project is part of our Data Structures and Algorithms coursework in the 3rd semester. We aim to showcase our understanding and implementation of various data structures and algorithms to solve a fictional train-related problem.
+Welcome to our Train-Problem DSA project! This project is part of our Data Structures and Algorithms coursework in the 3rd semester. We aim to showcase our understanding and implementation of various data structures and algorithms to solve train-related problem.
 
 ## Team Members
 
