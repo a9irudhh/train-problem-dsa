@@ -6,8 +6,8 @@ Welcome to our Train-Problem DSA project! This project is part of our Data Struc
 
 ## Team Members
 
-- [Member 1](link-to-profile):  Anirudh R. Hanchinamani
-- [Member 2](link-to-profile):  Sumedh S. Kaulgud
+- [Member 1]((https://github.com/a9irudh)):  Anirudh R. Hanchinamani
+- [Member 2](https://github.com/ForzaVeritas):  Sumedh S. Kaulgud
 - [Member 3](link-to-profile):  B. R. Abhishek
 - [Member 4](link-to-profile):  Om Muddapur
 
@@ -15,9 +15,6 @@ Welcome to our Train-Problem DSA project! This project is part of our Data Struc
 
 - [Introduction](#introduction)
 - [Problem Statement](#problem-statement)
-- [Technologies Used](#technologies-used)
-- [Data Structures Implemented](#data-structures-implemented)
-- [Algorithms Utilized](#algorithms-utilized)
 
 ## Introduction
 
