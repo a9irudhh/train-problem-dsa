@@ -1,0 +1,5 @@
+Dorm1 100 500.00 10 4.5 Good dormitory with spacious rooms
+Dorm2 80 450.00 15 3.8 Affordable dormitory with decent facilities
+Dorm3 120 600.00 5 4.2 Modern dormitory with great amenities
+Dorm4 90 550.00 8 4.0 Comfortable dormitory in a central location
+Dorm5 110 520.00 12 4.8 High-rated dormitory with excellent services
