@@ -1,9 +1,15 @@
-/* Needs to be updated, incomplete code
-*/
+/**
+ * Implemented Dijkstra's Algorithm to find Shortest path between any 2 patforms
+ * Written By: Anirudh R. H.
+ * Date: 08/01/2024
+ */
+
+// necessary headers
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 
+// adjacency Matrix to show the connection between two platforms
 int adjacencyMatrix[10][10] = {
     {0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
     {1, 0, 1, 0, 1, 0, 0, 1, 0, 0},
@@ -16,6 +22,7 @@ int adjacencyMatrix[10][10] = {
     {0, 0, 0, 0, 0, 1, 0, 1, 0, 1},
     {0, 0, 1, 0, 0, 1, 0, 0, 1, 0}};
 
+// weight matrix to show the distance between any 2 platforms
 int weightMatrix[10][10] = {
     {0, 2, 999999, 999999, 999999, 999999, 5, 999999, 999999, 999999},
     {2, 0, 3, 999999, 2, 999999, 999999, 10, 999999, 999999},
@@ -28,6 +35,12 @@ int weightMatrix[10][10] = {
     {999999, 999999, 999999, 999999, 999999, 4, 999999, 6, 0, 2},
     {999999, 999999, 2, 999999, 999999, 2, 999999, 999999, 2, 0}};
 
+/**
+ * Function Name: dijkstra
+ * Input Params: NILL
+ * Return Type: void
+ * Description: Implementation of Dijkstras Algorithm
+ **/
 void dijkstra(int graph[10][10], int src, int dest, int numPlatforms)
 {
     int *dist = (int *)malloc(sizeof(int) * numPlatforms);
@@ -69,6 +82,12 @@ void dijkstra(int graph[10][10], int src, int dest, int numPlatforms)
     printf("Shortest distance between Platform %d and Platform %d is: %d\n", src + 1, dest + 1, dist[dest]);
 }
 
+/**
+ * Function Name: shortestRouteBwPlatforms
+ * Input Params: NILL
+ * Return Type: void
+ * Description: Scans the Initial and Final Platforms and Calls Dijkstra's algorithm to find Shortest Path
+ **/
 void shortestRouteBwPlatforms()
 {
     int initialPlatform, finalPlatform;
@@ -88,6 +107,9 @@ void shortestRouteBwPlatforms()
     dijkstra(weightMatrix, initialPlatform - 1, finalPlatform - 1, 10);
 }
 
+/**
+ * Main function to call UDF
+ */
 int main()
 {
     shortestRouteBwPlatforms();
