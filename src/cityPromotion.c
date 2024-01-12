@@ -11,7 +11,7 @@ typedef struct CityPromotion
     char description[200];
 } CP;
 
-//necessary globalDeclarations
+// necessary globalDeclarations
 CP dataToDisplay[100];
 int globalCount = 0;
 
@@ -120,7 +120,7 @@ void quickSort(int low, int high)
 void displayData()
 {
     printf("RATING       REVIEW\n");
-    for (int i = globalCount-1; i > 0; i--)
+    for (int i = globalCount - 1; i > 0; i--)
         printf("%.1lf\t%s\n", dataToDisplay[i].rating, dataToDisplay[i].description);
 }
 
@@ -130,6 +130,6 @@ void displayData()
 int main()
 {
     loadFromFile();
-    quickSort(0, globalCount-1);
+    quickSort(0, globalCount - 1);
     displayData();
 }

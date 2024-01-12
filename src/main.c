@@ -6,17 +6,17 @@ int main()
     welcomeMessage();
     while (true)
     {
-        menuForPassengerComfrot();
+        menuForPassengerComfort();
         scanf("%d", &choice);
         system("cls");
 
         switch (choice)
         {
         case 0:
-            exit(USER_EXIT);
+            exit(0);
             break;
-        
-        case 1: 
+
+        case 1:
             cityPromotions();
             break;
         default:
@@ -24,22 +24,7 @@ int main()
             break;
         }
     }
-    
+
+    system("cls");
+    return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -132,7 +132,7 @@ void displayData()
     printf("DORMITORY NAME  BED COUNT  RENT  AVAILABILITY  RATING  REVIEW\n");
     for (int i = globalCount - 1; i > 0; i--)
     {
-        printf("%-15s %-10d %-6.2lf %-13d %-6.2lf %s\n",  //used padding of spaces to maintain clean output 
+        printf("%-15s %-10d %-6.2lf %-13d %-6.2lf %s\n", // used padding of spaces to maintain clean output
                dataToDisplay[i].dormitoryName,
                dataToDisplay[i].dormitoryBedCount,
                dataToDisplay[i].dormitoryRent,
