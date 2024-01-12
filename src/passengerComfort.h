@@ -21,9 +21,10 @@
 
 void welcomeMessage(void);
 void menuForPassengerComfort(void);
-
-
-
+void welcomeCityPromotions(void);
+void menuForCityPromotions(void);
+void viewTopCity(void);
+void loadFileCityPromotions(void);
 
 
 #endif // INVENTORY_H_INCLUDED

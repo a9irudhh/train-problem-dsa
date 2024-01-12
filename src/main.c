@@ -8,11 +8,12 @@ int main()
     {
         menuForPassengerComfrot();
         scanf("%d", &choice);
+        system("cls");
 
         switch (choice)
         {
         case 0:
-            exit(-1);
+            exit(USER_EXIT);
             break;
         
         case 1: 
