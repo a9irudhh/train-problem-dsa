@@ -104,7 +104,7 @@ int loadFileCityPromotions(void)
     FILE *fp;
 
     // Open the file in read mode
-    fp = fopen("cityPromotionDataBase.txt", "r");
+    fp = fopen("textCityPromotionDataBase.txt", "r");
 
     // Check if the file was successfully opened
     if (fp == NULL)
@@ -239,7 +239,7 @@ void searchForCity(void)
     char searchString[25];
     getchar(); // Consume the newline character in the input buffer
 
-    printf("Enter search string: ");
+    printf("Enter Search string: ");
     fgets(searchString, sizeof(searchString), stdin);
     searchString[strcspn(searchString, "\n")] = '\0'; // Remove trailing newline, if any
 
@@ -278,7 +278,7 @@ void menuForCityPromotions(void)
 {
     printf("\n------------------MENU------------------\n\n");
     printf("-- Enter 1 to View City's Top Tourist spot\n");
-    printf("-- Enter 2 to Search For the City's Description\n");
+    printf("-- Enter 2 to Search for the Tourist Spot's Description\n");
     printf("-- Enter 3 to        \n");
     printf("-- Enter 4 to        \n");
     printf("-- Enter 5 to        \n");
@@ -307,10 +307,13 @@ void cityPromotions(void)
             return;
 
         case 1:
-            viewTopCity();
+            viewTopCity(); // implemented quicksort
             break;
         case 2:
-            searchForCity();
+            searchForCity(); // implemented Bfss to search 
+            break;
+        case 3:
+            getFeedbackOnCity(); // implemented hashing to login
             break;
         default:
             printf("Please Enter a Valid Choice\n\n");

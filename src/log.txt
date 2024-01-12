@@ -1,6 +1,10 @@
 _________________________START OF ITERATION________________________
 
-_________________________START OF ITERATION________________________
+Sat Jan 13 04:24:54 2024
+ loadFileCityPromotions : FILE_OPEN_ERROR --> Unable to open the city promotion file
+
+Sat Jan 13 04:24:57 2024
+ loadFileCityPromotions : FILE_OPEN_ERROR --> Unable to open the city promotion file
 
 _________________________START OF ITERATION________________________
 

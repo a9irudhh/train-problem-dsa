@@ -38,4 +38,4 @@ int partition(int, int);
 void swap(CPS *, CPS *);
 void searchForCity(void);
 
-#endif // INVENTORY_H_INCLUDED
+#endif // PASSENGERCOMFORT_H_INCLUDED
