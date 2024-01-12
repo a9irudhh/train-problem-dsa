@@ -5,10 +5,14 @@
 // of the structs to make data get
 // transferred to primary memory from secondary.
 CPS dataToDisplay[100];
+CPS duplicateDataDisplay[100];
+CPS searchHistory[100];
 
 // necessary global count
 // used in maintaining overall data count
 int globalCount = 0;
+int historyCount = 0;
+int duplicateDataCount = 0;
 
 // definitions of all the functions which I have used in my code
 
@@ -66,7 +70,7 @@ void welcomeMessage(void)
         printf("*");
 
     for (int i = 0; i < 1000000; i++)
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < 55; i++)
             ;
 
     return;
@@ -93,23 +97,6 @@ void menuForPassengerComfort(void)
 void welcomeCityPromotions(void)
 {
     ;
-}
-
-void menuForCityPromotions(void)
-{
-    printf("\n------------------MENU------------------\n\n");
-    printf("-- Enter 1 to View City's Top Tourist spot\n");
-    printf("-- Enter 2 to        \n");
-    printf("-- Enter 3 to        \n");
-    printf("-- Enter 4 to        \n");
-    printf("-- Enter 5 to        \n");
-    printf("-- Enter 6 to        \n");
-    printf("-- Enter 7 to        \n");
-    printf("-- Enter 8 to        \n");
-    printf("-- Enter 9 to        \n\n");
-
-    printf("Enter 0 to go back \n  =>");
-    return;
 }
 
 int loadFileCityPromotions(void)
@@ -203,6 +190,22 @@ void quickSortForTopCity(int low, int high)
     }
 }
 
+int bruteForceStringSearch(char *T, char *P)
+{
+    int n = strlen(T);
+    int m = strlen(P);
+    for (int i = 0; i <= n - m; i++)
+    {
+        int j = 0;
+        while (j < m && P[j] == T[i + j])
+            j++;
+        if (j == m)
+            return i;
+    }
+
+    return -1;
+}
+
 void viewTopCity(void)
 {
     status = loadFileCityPromotions();
@@ -220,9 +223,76 @@ void viewTopCity(void)
     return;
 }
 
+void searchForCity(void)
+{
+    globalCount = 0;
+    duplicateDataCount = 0;
+
+    status = loadFileCityPromotions();
+    if (status != 1)
+    {
+        printf("Load Failed\n");
+        return;
+    }
+
+    printf("working\n");
+    char searchString[25];
+    getchar(); // Consume the newline character in the input buffer
+
+    printf("Enter search string: ");
+    fgets(searchString, sizeof(searchString), stdin);
+    searchString[strcspn(searchString, "\n")] = '\0'; // Remove trailing newline, if any
+
+    if (strlen(searchString) == 0)
+    {
+        // If the search string is empty, display all records
+        for (int i = 0; i < globalCount; i++)
+        {
+            printf("RATING  REVIEW\n\n");
+            printf("%.1lf\t%s\n", dataToDisplay[i].rating, dataToDisplay[i].description);
+        }
+        return;
+    }
+
+    for (int i = 0; i < globalCount; i++)
+    {
+        int k = bruteForceStringSearch(dataToDisplay[i].description, searchString);
+        if (k != -1)
+        {
+            duplicateDataDisplay[duplicateDataCount].rating = dataToDisplay[i].rating;
+            strcpy(duplicateDataDisplay[duplicateDataCount].description, dataToDisplay[i].description);
+            duplicateDataCount++;
+        }
+    }
+
+    for (int i = 0; i < duplicateDataCount; i++)
+    {
+        printf("RATING  REVIEW\n\n");
+        printf("%.1lf\t%s\n", duplicateDataDisplay[i].rating, duplicateDataDisplay[i].description);
+    }
+
+    return;
+}
+
+void menuForCityPromotions(void)
+{
+    printf("\n------------------MENU------------------\n\n");
+    printf("-- Enter 1 to View City's Top Tourist spot\n");
+    printf("-- Enter 2 to Search For the City's Description\n");
+    printf("-- Enter 3 to        \n");
+    printf("-- Enter 4 to        \n");
+    printf("-- Enter 5 to        \n");
+    printf("-- Enter 6 to        \n");
+    printf("-- Enter 7 to        \n");
+    printf("-- Enter 8 to        \n");
+    printf("-- Enter 9 to        \n\n");
+
+    printf("Enter 0 to go back \n  =>");
+    return;
+}
+
 void cityPromotions(void)
 {
-    open_log();
 
     // welcomeCityPromotions();
     choice = 0;
@@ -234,11 +304,13 @@ void cityPromotions(void)
         switch (choice)
         {
         case 0:
-            close_log();
             return;
 
         case 1:
             viewTopCity();
+            break;
+        case 2:
+            searchForCity();
             break;
         default:
             printf("Please Enter a Valid Choice\n\n");

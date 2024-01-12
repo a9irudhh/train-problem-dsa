@@ -36,5 +36,6 @@ void write_log(char *, char *, char *);
 void quickSortForTopCity(int, int);
 int partition(int, int);
 void swap(CPS *, CPS *);
+void searchForCity(void);
 
 #endif // INVENTORY_H_INCLUDED

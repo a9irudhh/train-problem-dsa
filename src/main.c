@@ -3,6 +3,8 @@
 
 int main()
 {
+    open_log();
+    
     welcomeMessage();
     while (true)
     {
@@ -26,5 +28,7 @@ int main()
     }
 
     system("cls");
+
+    close_log();
     return 0;
 }
