@@ -4,6 +4,7 @@
 // Below mentioned are error status/status codes
 #define SUCCESS 1
 #define FAILURE -1
+#define ACCOUNT_CREATION_ERROR 2
 #define FILE_OPEN_ERROR 1001
 #define MEMORY_ALLOCATION_ERROR 1002
 #define FILE_DELETE_ERROR 1003

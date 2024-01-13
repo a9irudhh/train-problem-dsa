@@ -15,6 +15,11 @@ int choice = 0;
 // captured in status variable
 int status = 0;
 
+// getString is a variable to capture the string 
+// Memory for this has to be allocated as per need based on
+// the string size
+char *getString = NULL;
+
 // The tindex variable can be used as a index in loops
 // It stands for temporary index
 int tindex = 0;

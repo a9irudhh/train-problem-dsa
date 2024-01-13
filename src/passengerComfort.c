@@ -1,5 +1,6 @@
 #include "passengerComfort.h"
 #include "settings.h"
+#include "locals.h"
 
 // necessary global declaration
 // of the structs to make data get
@@ -13,14 +14,14 @@ CPS searchHistory[100];
 int globalCount = 0;
 int historyCount = 0;
 int duplicateDataCount = 0;
-
+int feedBackCount = 0;
 // definitions of all the functions which I have used in my code
 
-// Function:     open_log
+// Function:     openLog
 // Description:  opens the log file to write the success or failure status
 // Input param:  NULL
 // Return Type:  NULL
-void open_log()
+void openLog()
 {
     // Open the file
     flog = fopen("log.txt", "a+");
@@ -34,11 +35,11 @@ void open_log()
     fprintf(flog, "%s", "\n\n");
 }
 
-// Function:     close_log
+// Function:     closeLog
 // Description:  closes the log file if opened
 // Input param:  NULL
 // Return Type:  NULL
-void close_log()
+void closeLog()
 {
     if (flog != NULL)
     {
@@ -51,7 +52,7 @@ void close_log()
     }
 }
 
-void write_log(char *function_name, char *status, char *message)
+void writeLog(char *function_name, char *status, char *message)
 {
     // Write the appropriate log message with associated run time
     myTime = time(NULL);
@@ -109,7 +110,7 @@ int loadFileCityPromotions(void)
     // Check if the file was successfully opened
     if (fp == NULL)
     {
-        write_log("loadFileCityPromotions", "FILE_OPEN_ERROR", "Unable to open the city promotion file");
+        writeLog("loadFileCityPromotions", "FILE_OPEN_ERROR", "Unable to open the city promotion file");
         return FAILURE;
     }
 
@@ -235,7 +236,7 @@ void searchForCity(void)
         return;
     }
 
-    printf("working\n");
+    // printf("working\n");
     char searchString[25];
     getchar(); // Consume the newline character in the input buffer
 
@@ -274,12 +275,70 @@ void searchForCity(void)
     return;
 }
 
+int addFeedback(char *username, char *city, char *feedback)
+{
+    FILE *file = fopen("textFeedbackDataBase.txt", "a");
+
+    if (file == NULL)
+        return FAILURE;
+
+    fprintf(file, "User: %s, City: %s, Feedback: %s\n", username, city, feedback);
+    fclose(file);
+
+    printf("Feedback added successfully.\n");
+    return SUCCESS;
+}
+
+char *createAccount(void)
+{
+}
+
+char *getLoginCredentials(void)
+{
+}
+void giveFeedbackPromt(char *userName)
+{
+}
+
+void getFeedbackOnCity(void)
+{
+    char userChoice;
+    while (true)
+    {
+    wrongInput:
+        printf("Are you a New User? [Y/N]\n");
+        scanf("%c", &userChoice);
+
+        userChoice = toupper(userChoice);
+        if (userChoice == 'Y')
+        {
+            getString = createAccount();
+            if (getString == NULL)
+                return;
+
+            giveFeedbackPromt(getString);
+            return;
+        }
+        else if (userChoice == 'N')
+        {
+            getString = getLoginCredentials();
+            if (getString == NULL)
+                return;
+
+            giveFeedbackPromt(getString);
+            return;
+        }
+        else
+            goto wrongInput;
+    }
+}
+
 void menuForCityPromotions(void)
 {
     printf("\n------------------MENU------------------\n\n");
     printf("-- Enter 1 to View City's Top Tourist spot\n");
     printf("-- Enter 2 to Search for the Tourist Spot's Description\n");
-    printf("-- Enter 3 to        \n");
+    printf("-- Enter 3 to Give Feedback on a City\n");
     printf("-- Enter 4 to        \n");
     printf("-- Enter 5 to        \n");
     printf("-- Enter 6 to        \n");
@@ -310,10 +369,13 @@ void cityPromotions(void)
             viewTopCity(); // implemented quicksort
             break;
         case 2:
-            searchForCity(); // implemented Bfss to search 
+            searchForCity(); // implemented Bfss to search
             break;
         case 3:
-            getFeedbackOnCity(); // implemented hashing to login
+            getFeedbackOnCity(); // implemented hashing 
+            break;
+        case 4:
+            addCityToTheFile();
             break;
         default:
             printf("Please Enter a Valid Choice\n\n");

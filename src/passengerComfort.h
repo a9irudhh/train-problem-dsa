@@ -23,19 +23,27 @@ typedef struct cityPromotionStruct
     double rating;
     char description[300];
 } CPS;
+
 // Function Declarations
 
+void writeLog(char *, char *, char *);
+void openLog();
+void closeLog();
 void welcomeMessage(void);
-void menuForPassengerComfort(void);
-void cityPromotions(void);
 void welcomeCityPromotions(void);
+void menuForPassengerComfort(void);
 void menuForCityPromotions(void);
+void cityPromotions(void);
 void viewTopCity(void);
 int loadFileCityPromotions(void);
-void write_log(char *, char *, char *);
 void quickSortForTopCity(int, int);
 int partition(int, int);
 void swap(CPS *, CPS *);
 void searchForCity(void);
+void getFeedbackOnCity(void);
+int addFeedback(char *, char *, char *);
+char *createAccount(void);
+char *getLoginCredentials(void);
+void giveFeedbackPromt(char *);
 
 #endif // PASSENGERCOMFORT_H_INCLUDED
