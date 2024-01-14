@@ -15,6 +15,8 @@ int globalCount = 0;
 int historyCount = 0;
 int duplicateDataCount = 0;
 int feedBackCount = 0;
+char userName[20];
+
 // definitions of all the functions which I have used in my code
 
 // Function:     openLog
@@ -266,8 +268,14 @@ void searchForCity(void)
         }
     }
 
+    if (duplicateDataCount == 0)
+    {
+        printf("No Cities with name %s\n", searchString);
+        return;
+    }
     for (int i = 0; i < duplicateDataCount; i++)
     {
+
         printf("RATING  REVIEW\n\n");
         printf("%.1lf\t%s\n", duplicateDataDisplay[i].rating, duplicateDataDisplay[i].description);
     }
@@ -277,7 +285,7 @@ void searchForCity(void)
 
 int addFeedback(char *username, char *city, char *feedback)
 {
-    FILE *file = fopen("textFeedbackDataBase.txt", "a");
+    FILE *file = fopen("textFeedbackDataBase.txt", "a+");
 
     if (file == NULL)
         return FAILURE;
@@ -291,6 +299,27 @@ int addFeedback(char *username, char *city, char *feedback)
 
 char *createAccount(void)
 {
+    printf("Please Enter Your Name: ");
+    scanf(" %19[^\n]s", userName); // Corrected format specifier
+
+    int attempts = 7;
+    while (attempts > 0)
+    {
+        system("cls");
+        int maskedCharacters = 7 - attempts;
+        printf("Enter password: ");
+
+        while (maskedCharacters--)
+            printf("*");
+        getch();
+        attempts--;
+    }
+
+    // Clear the input buffer
+    while (getchar() != '\n')
+        ;
+
+    return userName;
 }
 
 char *getLoginCredentials(void)
@@ -298,16 +327,41 @@ char *getLoginCredentials(void)
 }
 void giveFeedbackPromt(char *userName)
 {
+    char userDescription[100];
+    char userEnteredCity[25];
+
+    printf("Enter the city Name:\n");
+    if (scanf("%24[^\n]s", userEnteredCity) != 1)
+    {
+        printf("Error reading city name.\n");
+        return;
+    }
+
+    printf("Enter the city description:\n");
+    if (scanf(" %99[^\n]s", userDescription) != 1)
+    {
+        printf("Error reading city description.\n");
+        return;
+    }
+
+    status = addFeedback(userName, userEnteredCity, userDescription);
+    if (status != SUCCESS)
+    {
+        printf("Feedback couldn't be added.\n");
+        return;
+    }
+    return;
 }
 
 void getFeedbackOnCity(void)
 {
+    system("cls");
     char userChoice;
     while (true)
     {
     wrongInput:
-        printf("Are you a New User? [Y/N]\n");
-        scanf("%c", &userChoice);
+        printf("Are you a New User? [Y/N]\nEnter 0 to return\n =>");
+        scanf(" %c", &userChoice);
 
         userChoice = toupper(userChoice);
         if (userChoice == 'Y')
@@ -326,6 +380,11 @@ void getFeedbackOnCity(void)
                 return;
 
             giveFeedbackPromt(getString);
+            return;
+        }
+        else if (userChoice == '0')
+        {
+            system("cls");
             return;
         }
         else
@@ -372,10 +431,9 @@ void cityPromotions(void)
             searchForCity(); // implemented Bfss to search
             break;
         case 3:
-            getFeedbackOnCity(); // implemented hashing 
+            getFeedbackOnCity();
             break;
         case 4:
-            addCityToTheFile();
             break;
         default:
             printf("Please Enter a Valid Choice\n\n");
