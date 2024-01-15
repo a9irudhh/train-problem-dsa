@@ -16,7 +16,7 @@ int historyCount = 0;
 int duplicateDataCount = 0;
 int feedBackCount = 0;
 char userName[20];
-
+char password[7];
 // definitions of all the functions which I have used in my code
 
 // Function:     openLog
@@ -64,17 +64,13 @@ void writeLog(char *function_name, char *status, char *message)
 void welcomeMessage(void)
 {
     system("cls");
-    for (tindex = 0; tindex < 80; tindex++)
+    for (tindex = 0; tindex < 100; tindex++)
         printf("*");
 
-    printf("\n\n\t\t    WELCOME TO PASSENGER COMFORT MODULE\n\n");
+    printf("\n\n\t\t\t      WELCOME TO PASSENGER COMFORT MODULE\n\n");
 
-    for (tindex = 0; tindex < 80; tindex++)
+    for (tindex = 0; tindex < 100; tindex++)
         printf("*");
-
-    for (int i = 0; i < 1000000; i++)
-        for (int i = 0; i < 55; i++)
-            ;
 
     return;
 }
@@ -82,7 +78,7 @@ void welcomeMessage(void)
 void menuForPassengerComfort(void)
 {
     // system("cls");
-    printf("\n------------------MENU------------------\n\n");
+    printf("\n\t\t\t  ------------------MENU------------------\n\n");
     printf("-- Enter 1 to View the City's Unique Attractions\n");
     printf("-- Enter 2 to        \n");
     printf("-- Enter 3 to        \n");
@@ -297,11 +293,27 @@ int addFeedback(char *username, char *city, char *feedback)
     return SUCCESS;
 }
 
+int addHashedPassword(char *username, int hashedValue)
+{
+    FILE *file = fopen("textPasswordData.txt", "a+");
+
+    if (file == NULL)
+        return FAILURE;
+
+    fprintf(file, "%s\t%d", username, hashedValue);
+    fclose(file);
+
+    printf("Password Accepted\n");
+    return SUCCESS;
+}
+
 char *createAccount(void)
 {
+    int secreteNumber;
     printf("Please Enter Your Name: ");
     scanf(" %19[^\n]s", userName); // Corrected format specifier
 
+    int i = 0;
     int attempts = 7;
     while (attempts > 0)
     {
@@ -311,13 +323,22 @@ char *createAccount(void)
 
         while (maskedCharacters--)
             printf("*");
-        getch();
+        password[i] = getch();
+        i++;
         attempts--;
     }
 
-    // Clear the input buffer
-    while (getchar() != '\n')
-        ;
+    // secreteNumber = getHashValue(password);
+    // status = addHashedPassword(userName, secreteNumber);
+    if (status != 1)
+    {
+        printf("Password Database Updation error\n");
+        return NULL;
+    }
+
+        // Clear the input buffer
+        while (getchar() != '\n')
+            ;
 
     return userName;
 }
@@ -330,7 +351,7 @@ void giveFeedbackPromt(char *userName)
     char userDescription[100];
     char userEnteredCity[25];
 
-    printf("Enter the city Name:\n");
+    printf("\nEnter the city Name:\n");
     if (scanf("%24[^\n]s", userEnteredCity) != 1)
     {
         printf("Error reading city name.\n");

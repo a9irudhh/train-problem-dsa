@@ -46,5 +46,6 @@ int addFeedback(char *, char *, char *);
 char *createAccount(void);
 char *getLoginCredentials(void);
 void giveFeedbackPromt(char *);
-
+int addHashedPassword(char *, int);
+int getHashValue(char *);
 #endif // PASSENGERCOMFORT_H_INCLUDED
