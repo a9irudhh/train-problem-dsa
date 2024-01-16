@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 #include <time.h>
 #include <sys/stat.h>
 #include <stdbool.h>
@@ -46,6 +47,11 @@ int addFeedback(char *, char *, char *);
 char *createAccount(void);
 char *getLoginCredentials(void);
 void giveFeedbackPromt(char *);
-int addHashedPassword(char *, int);
-int getHashValue(char *);
+int addHashedPasswordToFile(char *, unsigned long);
+unsigned long getHashValueDjb2(char *);
+int rabinKarpSearchInitiater(char *);
+int rabinKarpSearch(char *, char *);
+unsigned long long recalculateHash(char *, int, int, unsigned long long, int);
+unsigned long long createHash(char *, int );
+
 #endif // PASSENGERCOMFORT_H_INCLUDED

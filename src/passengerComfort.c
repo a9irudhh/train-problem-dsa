@@ -293,23 +293,38 @@ int addFeedback(char *username, char *city, char *feedback)
     return SUCCESS;
 }
 
-int addHashedPassword(char *username, int hashedValue)
+int addHashedPasswordToFile(char *username, unsigned long hashedValue)
 {
     FILE *file = fopen("textPasswordData.txt", "a+");
 
     if (file == NULL)
         return FAILURE;
 
-    fprintf(file, "%s\t%d", username, hashedValue);
+    fprintf(file, "%s\t%lu\n", username, hashedValue);
     fclose(file);
 
-    printf("Password Accepted\n");
+    printf("\nPassword Accepted\n");
     return SUCCESS;
+}
+
+unsigned long getHashValueDjb2(char *tempPassword)
+{
+
+    unsigned long hash = 5381;
+    int c;
+
+    while ((c = *tempPassword++))
+    {
+        hash = ((hash << 5) + hash) + c; // hash * 33 + c
+    }
+
+    return hash;
 }
 
 char *createAccount(void)
 {
-    int secreteNumber;
+    system("cls");
+    unsigned long secreteNumber;
     printf("Please Enter Your Name: ");
     scanf(" %19[^\n]s", userName); // Corrected format specifier
 
@@ -317,7 +332,6 @@ char *createAccount(void)
     int attempts = 7;
     while (attempts > 0)
     {
-        system("cls");
         int maskedCharacters = 7 - attempts;
         printf("Enter password: ");
 
@@ -328,24 +342,152 @@ char *createAccount(void)
         attempts--;
     }
 
-    // secreteNumber = getHashValue(password);
-    // status = addHashedPassword(userName, secreteNumber);
+    secreteNumber = getHashValueDjb2(password);
+    status = addHashedPasswordToFile(userName, secreteNumber);
     if (status != 1)
     {
         printf("Password Database Updation error\n");
         return NULL;
     }
 
-        // Clear the input buffer
-        while (getchar() != '\n')
-            ;
+    // Clear the input buffer
+    while (getchar() != '\n')
+        ;
 
     return userName;
 }
 
+int searchInFile(char *target)
+{
+    FILE *file = fopen("textPasswordData.txt", "r");
+
+    if (file == NULL)
+    {
+        perror("Error opening file");
+        return -1;
+    }
+
+    char line[200];
+    int line_number = 0;
+
+    while (fgets(line, sizeof(line), file) != NULL)
+    {
+        line_number++;
+
+        // Extract the first string (token) from the line
+        char *token = strtok(line, "\t");
+        if (token != NULL)
+        {
+            // Compare the token with the target string
+            if (rabinKarpSearch(token, target) == 1)
+            {
+                fclose(file);
+                return line_number;
+            }
+        }
+    }
+
+    fclose(file);
+    return FAILURE;
+}
+
+int rabinKarpSearch(char *token, char *target)
+{
+    // text-> token, pattern ->target
+    int tokenSize = strlen(token);
+    int targetSize = strlen(target);
+    unsigned long long targetHash = createHash(target, targetSize);
+    unsigned long long tokenHash = createHash(token, targetSize); // why targetsize => bcz it is the window size
+
+    for (int i = 0; i <= tokenSize - targetSize; i++)
+    {
+        if (tokenHash == targetHash)
+        {
+            int match = 1;
+            for (int j = 0; j < targetSize; j++)
+            {
+                if (token[i + j] != target[j])
+                {
+                    match = 0;
+                    break;
+                }
+            }
+            if (match)
+                return i; // Pattern found at index i
+        }
+
+        if (i < tokenSize - targetSize)
+        {
+            tokenHash = recalculateHash(token, i, i + targetSize, tokenHash, targetSize);
+        }
+    }
+
+    return -1; // Pattern not found
+}
+
+unsigned long long recalculateHash(char *str, int oldIndex, int newIndex, unsigned long long oldHash, int patternLength)
+{
+    unsigned long long newHash = oldHash - str[oldIndex] * pow(101, patternLength - 1);
+    newHash *= 101;
+    newHash += str[newIndex];
+
+    return newHash;
+}
+
+unsigned long long createHash(char *str, int length)
+{
+    unsigned long long hash = 0;
+
+    for (int i = 0; i < length; i++)
+    {
+        hash += str[i] * pow(101, length - 1 - i);
+    }
+
+    return hash;
+}
+
+int rabinKarpSearchInitiater(char *userName)
+{
+    char tempUsername[20];
+    unsigned long secreteNumber;
+    strcpy(tempUsername, userName);
+
+    status = searchInFile(userName);
+    if (status == -1)
+    {
+        printf("Account with Name %s doesnt exist\n", tempUsername);
+        return FAILURE;
+    }
+
+    int i = 0;
+    int attempts = 7;
+    while (attempts > 0)
+    {
+        int maskedCharacters = 7 - attempts;
+        printf("Enter password: ");
+
+        while (maskedCharacters--)
+            printf("*");
+        password[i] = getch();
+        i++;
+        attempts--;
+    }
+
+    secreteNumber = getHashValueDjb2(password);
+}
+
 char *getLoginCredentials(void)
 {
+    printf("Please Enter Your Name: ");
+    scanf(" %19[^\n]s", userName);
+
+    status = rabinKarpSearchInitiater(userName);
+    if (status != 1)
+        return NULL;
+
+    return userName;
 }
+
 void giveFeedbackPromt(char *userName)
 {
     char userDescription[100];
@@ -409,7 +551,10 @@ void getFeedbackOnCity(void)
             return;
         }
         else
+        {
+            printf("Please choose [Y/N]\n");
             goto wrongInput;
+        }
     }
 }
 
@@ -432,7 +577,6 @@ void menuForCityPromotions(void)
 
 void cityPromotions(void)
 {
-
     // welcomeCityPromotions();
     choice = 0;
     while (true)

@@ -4,7 +4,7 @@
 int main()
 {
     openLog();
-    
+
     welcomeMessage();
     while (true)
     {
