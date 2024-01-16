@@ -328,16 +328,13 @@ char *createAccount(void)
     printf("Please Enter Your Name: ");
     scanf(" %19[^\n]s", userName); // Corrected format specifier
 
+    printf("Enter password: ");
     int i = 0;
     int attempts = 7;
     while (attempts > 0)
     {
-        int maskedCharacters = 7 - attempts;
-        printf("Enter password: ");
-
-        while (maskedCharacters--)
-            printf("*");
         password[i] = getch();
+        printf("*");
         i++;
         attempts--;
     }
@@ -367,12 +364,12 @@ int searchInFile(char *target)
         return -1;
     }
 
-    char line[200];
-    int line_number = 0;
+    char line[100];
+    int lineNumber = 0;
 
     while (fgets(line, sizeof(line), file) != NULL)
     {
-        line_number++;
+        lineNumber++;
 
         // Extract the first string (token) from the line
         char *token = strtok(line, "\t");
@@ -382,7 +379,7 @@ int searchInFile(char *target)
             if (rabinKarpSearch(token, target) == 1)
             {
                 fclose(file);
-                return line_number;
+                return lineNumber;
             }
         }
     }
@@ -417,9 +414,7 @@ int rabinKarpSearch(char *token, char *target)
         }
 
         if (i < tokenSize - targetSize)
-        {
             tokenHash = recalculateHash(token, i, i + targetSize, tokenHash, targetSize);
-        }
     }
 
     return -1; // Pattern not found
@@ -439,9 +434,7 @@ unsigned long long createHash(char *str, int length)
     unsigned long long hash = 0;
 
     for (int i = 0; i < length; i++)
-    {
         hash += str[i] * pow(101, length - 1 - i);
-    }
 
     return hash;
 }
@@ -459,20 +452,18 @@ int rabinKarpSearchInitiater(char *userName)
         return FAILURE;
     }
 
+    int tempLineNumber = status;
+
+    printf("Enter password: ");
     int i = 0;
     int attempts = 7;
     while (attempts > 0)
     {
-        int maskedCharacters = 7 - attempts;
-        printf("Enter password: ");
-
-        while (maskedCharacters--)
-            printf("*");
         password[i] = getch();
+        printf("*");
         i++;
         attempts--;
     }
-
     secreteNumber = getHashValueDjb2(password);
 }
 
@@ -482,7 +473,7 @@ char *getLoginCredentials(void)
     scanf(" %19[^\n]s", userName);
 
     status = rabinKarpSearchInitiater(userName);
-    if (status != 1)
+    if (status == FAILURE)
         return NULL;
 
     return userName;
@@ -565,12 +556,6 @@ void menuForCityPromotions(void)
     printf("-- Enter 2 to Search for the Tourist Spot's Description\n");
     printf("-- Enter 3 to Give Feedback on a City\n");
     printf("-- Enter 4 to        \n");
-    printf("-- Enter 5 to        \n");
-    printf("-- Enter 6 to        \n");
-    printf("-- Enter 7 to        \n");
-    printf("-- Enter 8 to        \n");
-    printf("-- Enter 9 to        \n\n");
-
     printf("Enter 0 to go back \n  =>");
     return;
 }
