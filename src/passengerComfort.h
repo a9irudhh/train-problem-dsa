@@ -26,6 +26,12 @@ typedef struct cityPromotionStruct
     char description[300];
 } CPS;
 
+typedef struct loadHashedPassword
+{
+    char loadedName[20];
+    unsigned long loadedHashedPassword;
+}LHP;
+
 // Function Declarations
 
 void writeLog(char *, char *, char *);
@@ -54,4 +60,7 @@ int rabinKarpSearch(char *, char *);
 unsigned long long recalculateHash(char *, int, int, unsigned long long, int);
 unsigned long long createHash(char *, int );
 int countWords(char *);
+int searchInFile(char *);
+void loadHshdpsdFromFile(void);
+
 #endif // PASSENGERCOMFORT_H_INCLUDED

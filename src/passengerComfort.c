@@ -8,10 +8,13 @@
 CPS dataToDisplay[100];
 CPS duplicateDataDisplay[100];
 CPS searchHistory[100];
+LHP hashedPasswordsCopy[100];
 
 // necessary global count
 // used in maintaining overall data count
 int globalCount = 0;
+int glbCntForHashedPasswords = 0;
+int maxHashedPsswords = 0;
 int historyCount = 0;
 int duplicateDataCount = 0;
 int feedBackCount = 0;
@@ -307,6 +310,22 @@ int addHashedPasswordToFile(char *username, unsigned long hashedValue)
     return SUCCESS;
 }
 
+void loadHshdpsdFromFile(void)
+{
+    FILE *fhash = fopen("textPasswordData.txt", "r");
+
+    if (fhash == NULL)
+    {
+        perror("Error opening file");
+        return;
+    }
+
+    while (glbCntForHashedPasswords < maxHashedPsswords && fscanf(fhash, "%19s\t%lu", hashedPasswordsCopy[glbCntForHashedPasswords].loadedName, &hashedPasswordsCopy[glbCntForHashedPasswords].loadedHashedPassword))
+        glbCntForHashedPasswords++;
+
+    fclose(fhash);
+}
+
 int countWords(char *input)
 {
     int count = 0;
@@ -356,6 +375,12 @@ moreThan2Words:
         goto moreThan2Words;
     }
 
+    status = searchInFile(userName);
+    if (status == 1)
+    {
+        printf("Username already exists.\n");
+        goto moreThan2Words;
+    }
     printf("Enter password: ");
     int i = 0;
     int attempts = 7;
@@ -430,13 +455,12 @@ int rabinKarpSearch(char *token, char *target)
         {
             int match = 1;
             for (int j = 0; j < targetSize; j++)
-            {
                 if (token[i + j] != target[j])
                 {
                     match = 0;
                     break;
                 }
-            }
+
             if (match)
                 return SUCCESS; // Pattern found at index i
         }
@@ -472,9 +496,8 @@ int rabinKarpSearchInitiater(char *userName)
     char tempUsername[20];
     unsigned long secreteNumber;
     strcpy(tempUsername, userName);
-
     status = searchInFile(userName);
-    if (status == -1)
+    if (status != 1)
     {
         printf("Account with Name %s doesnt exist\n", tempUsername);
         return FAILURE;
@@ -493,8 +516,12 @@ int rabinKarpSearchInitiater(char *userName)
         attempts--;
     }
 
+    getch();
     secreteNumber = getHashValueDjb2(password);
+    loadHshdpsdFromFile();
 
+    //update the mergesort code here
+    
 }
 
 char *getLoginCredentials(void)
@@ -534,6 +561,7 @@ void giveFeedbackPromt(char *userName)
         printf("Feedback couldn't be added.\n");
         return;
     }
+
     return;
 }
 
@@ -554,6 +582,7 @@ void getFeedbackOnCity(void)
             if (getString == NULL)
                 return;
 
+            maxHashedPsswords++;
             giveFeedbackPromt(getString);
             return;
         }
@@ -563,6 +592,7 @@ void getFeedbackOnCity(void)
             if (getString == NULL)
                 return;
 
+            maxHashedPsswords++;
             giveFeedbackPromt(getString);
             return;
         }
