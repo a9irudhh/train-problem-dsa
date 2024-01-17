@@ -53,5 +53,5 @@ int rabinKarpSearchInitiater(char *);
 int rabinKarpSearch(char *, char *);
 unsigned long long recalculateHash(char *, int, int, unsigned long long, int);
 unsigned long long createHash(char *, int );
-
+int countWords(char *);
 #endif // PASSENGERCOMFORT_H_INCLUDED

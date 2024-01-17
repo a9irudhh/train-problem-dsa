@@ -307,6 +307,23 @@ int addHashedPasswordToFile(char *username, unsigned long hashedValue)
     return SUCCESS;
 }
 
+int countWords(char *input)
+{
+    int count = 0;
+    // Determines where to split the input string, here after a blank space " ".
+    // Returns a pointer to the first token found in the input string.
+    char *token = strtok(input, " ");
+
+    while (token != NULL)
+    {
+        count++;
+        // Modifies the input string by replacing the delimiter (" ") with null characters
+        token = strtok(NULL, " ");
+    }
+
+    return count;
+}
+
 unsigned long getHashValueDjb2(char *tempPassword)
 {
 
@@ -325,8 +342,19 @@ char *createAccount(void)
 {
     system("cls");
     unsigned long secreteNumber;
-    printf("Please Enter Your Name: ");
+moreThan2Words:
+    printf("Please Enter Your Name[single word]: ");
     scanf(" %19[^\n]s", userName); // Corrected format specifier
+
+    userName[strcspn(userName, "\n")] = 0;
+
+    // count = 0;
+    count = countWords(userName);
+    if (count > 1)
+    {
+        printf("Don't include spaces in Username\n");
+        goto moreThan2Words;
+    }
 
     printf("Enter password: ");
     int i = 0;
@@ -372,14 +400,14 @@ int searchInFile(char *target)
         lineNumber++;
 
         // Extract the first string (token) from the line
-        char *token = strtok(line, "\t");
-        if (token != NULL)
+        char *token1 = strtok(line, "\t");
+        if (token1 != NULL)
         {
             // Compare the token with the target string
-            if (rabinKarpSearch(token, target) == 1)
+            if (rabinKarpSearch(token1, target) == 1)
             {
                 fclose(file);
-                return lineNumber;
+                return SUCCESS;
             }
         }
     }
@@ -410,7 +438,7 @@ int rabinKarpSearch(char *token, char *target)
                 }
             }
             if (match)
-                return i; // Pattern found at index i
+                return SUCCESS; // Pattern found at index i
         }
 
         if (i < tokenSize - targetSize)
@@ -464,7 +492,9 @@ int rabinKarpSearchInitiater(char *userName)
         i++;
         attempts--;
     }
+
     secreteNumber = getHashValueDjb2(password);
+
 }
 
 char *getLoginCredentials(void)
