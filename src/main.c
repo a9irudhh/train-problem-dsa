@@ -15,20 +15,19 @@ int main()
         switch (choice)
         {
         case 0:
+            closeLog();
             exit(0);
             break;
 
         case 1:
             cityPromotions();
             break;
+
         default:
             printf("Please Enter a Valid Choice\n\n");
             break;
         }
     }
 
-    system("cls");
-
-    closeLog();
     return 0;
 }

@@ -30,7 +30,7 @@ typedef struct loadHashedPassword
 {
     char loadedName[20];
     unsigned long loadedHashedPassword;
-}LHP;
+} LHP;
 
 // Function Declarations
 
@@ -58,9 +58,13 @@ unsigned long getHashValueDjb2(char *);
 int rabinKarpSearchInitiater(char *);
 int rabinKarpSearch(char *, char *);
 unsigned long long recalculateHash(char *, int, int, unsigned long long, int);
-unsigned long long createHash(char *, int );
+unsigned long long createHash(char *, int);
 int countWords(char *);
 int searchInFile(char *);
 void loadHshdpsdFromFile(void);
+void mergeSortForPassword(void);
+void merge(LHP *, int, LHP *, int, LHP *);
+void mergeSort(LHP *, int);
+int binarySearchForUnrecUser(unsigned long);
 
 #endif // PASSENGERCOMFORT_H_INCLUDED

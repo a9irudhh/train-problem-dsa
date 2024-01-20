@@ -192,6 +192,86 @@ void quickSortForTopCity(int low, int high)
     }
 }
 
+void mergeSortForPassword(void)
+{
+    if (glbCntForHashedPasswords > 1)
+        mergeSort(hashedPasswordsCopy, glbCntForHashedPasswords);
+
+    return;
+}
+
+void merge(LHP *B, int p, LHP *C, int q, LHP *A)
+{
+    int i = 0, j = 0, k = 0;
+
+    while (i < p && j < q)
+    {
+        if (B[i].loadedHashedPassword <= C[j].loadedHashedPassword)
+        {
+            A[k] = B[i];
+            i++;
+        }
+        else
+        {
+            A[k] = C[j];
+            j++;
+        }
+        k++;
+    }
+
+    if (i == p)
+    {
+        while (j < q)
+        {
+            A[k] = C[j];
+            j++;
+            k++;
+        }
+    }
+    else
+    {
+        while (i < p)
+        {
+            A[k] = B[i];
+            i++;
+            k++;
+        }
+    }
+}
+
+void mergeSort(LHP *A, int n)
+{
+    if (n > 1)
+    {
+        int mid = n / 2;
+
+        // Create arrays B and C to hold the two halves
+        LHP *B = (LHP *)malloc(mid * sizeof(LHP));
+        LHP *C = (LHP *)malloc((n - mid) * sizeof(LHP));
+
+        // Copy elements to B and C
+        for (int i = 0; i < mid; i++)
+        {
+            B[i] = A[i];
+        }
+
+        for (int i = mid; i < n; i++)
+        {
+            C[i - mid] = A[i];
+        }
+
+        // Recursively apply merge sort to B and C
+        mergeSort(B, mid);
+        mergeSort(C, n - mid);
+
+        // Merge the sorted arrays B and C back into A
+        merge(B, mid, C, n - mid, A);
+
+        // Free the allocated memory for arrays B and C
+        free(B);
+        free(C);
+    }
+}
 int bruteForceStringSearch(char *T, char *P)
 {
     int n = strlen(T);
@@ -320,7 +400,7 @@ void loadHshdpsdFromFile(void)
         return;
     }
 
-    while (glbCntForHashedPasswords < maxHashedPsswords && fscanf(fhash, "%19s\t%lu", hashedPasswordsCopy[glbCntForHashedPasswords].loadedName, &hashedPasswordsCopy[glbCntForHashedPasswords].loadedHashedPassword))
+    while (fscanf(fhash, "%19s\t%lu", hashedPasswordsCopy[glbCntForHashedPasswords].loadedName, &hashedPasswordsCopy[glbCntForHashedPasswords].loadedHashedPassword) == 2)
         glbCntForHashedPasswords++;
 
     fclose(fhash);
@@ -491,6 +571,23 @@ unsigned long long createHash(char *str, int length)
     return hash;
 }
 
+int binarySearchForUnrecUser(unsigned long match)
+{
+    int start = 0, end = glbCntForHashedPasswords;
+
+    while (start <= end)
+    {
+        int mid = start + (end - start) / 2;
+        if (hashedPasswordsCopy[mid].loadedHashedPassword == match)
+            return SUCCESS;
+        else if (hashedPasswordsCopy[mid].loadedHashedPassword > match)
+            end = mid - 1;
+        else
+            start = mid + 1;
+    }
+    return FAILURE;
+}
+
 int rabinKarpSearchInitiater(char *userName)
 {
     char tempUsername[20];
@@ -503,8 +600,6 @@ int rabinKarpSearchInitiater(char *userName)
         return FAILURE;
     }
 
-    int tempLineNumber = status;
-
     printf("Enter password: ");
     int i = 0;
     int attempts = 7;
@@ -516,12 +611,17 @@ int rabinKarpSearchInitiater(char *userName)
         attempts--;
     }
 
-    getch();
     secreteNumber = getHashValueDjb2(password);
     loadHshdpsdFromFile();
 
-    //update the mergesort code here
-    
+    mergeSortForPassword();
+    status = binarySearchForUnrecUser(secreteNumber);
+    if (status != 1)
+    {
+        printf("\nPassowrd Didn't Match.");
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 char *getLoginCredentials(void)
@@ -529,8 +629,10 @@ char *getLoginCredentials(void)
     printf("Please Enter Your Name: ");
     scanf(" %19[^\n]s", userName);
 
+    while (getchar() != '\n')
+        ;
     status = rabinKarpSearchInitiater(userName);
-    if (status == FAILURE)
+    if (status != 1)
         return NULL;
 
     return userName;
@@ -575,6 +677,7 @@ void getFeedbackOnCity(void)
         printf("Are you a New User? [Y/N]\nEnter 0 to return\n =>");
         scanf(" %c", &userChoice);
 
+        getchar();
         userChoice = toupper(userChoice);
         if (userChoice == 'Y')
         {
@@ -591,8 +694,6 @@ void getFeedbackOnCity(void)
             getString = getLoginCredentials();
             if (getString == NULL)
                 return;
-
-            maxHashedPsswords++;
             giveFeedbackPromt(getString);
             return;
         }
@@ -611,11 +712,10 @@ void getFeedbackOnCity(void)
 
 void menuForCityPromotions(void)
 {
-    printf("\n------------------MENU------------------\n\n");
+    printf("\n\t\t------------------MENU------------------\n\n");
     printf("-- Enter 1 to View City's Top Tourist spot\n");
     printf("-- Enter 2 to Search for the Tourist Spot's Description\n");
-    printf("-- Enter 3 to Give Feedback on a City\n");
-    printf("-- Enter 4 to        \n");
+    printf("-- Enter 3 to Give Feedback on a City\n\n");
     printf("Enter 0 to go back \n  =>");
     return;
 }
@@ -641,7 +741,7 @@ void cityPromotions(void)
             searchForCity(); // implemented Bfss to search
             break;
         case 3:
-            getFeedbackOnCity();
+            getFeedbackOnCity(); //hashing, rabinKarp, constructive algo
             break;
         case 4:
             break;
