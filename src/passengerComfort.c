@@ -912,6 +912,7 @@ void swapSNS(SNS *a, SNS *b)
     *a = *b;
     *b = temp;
 }
+
 void heapify(int n, int i)
 {
     int largest = i;
@@ -919,7 +920,7 @@ void heapify(int n, int i)
     int right = 2 * i + 2;
 
     if (left < n && placesList[left].platform > placesList[largest].platform)
-        largest = right;
+        largest = left;
     if (right < n && placesList[right].platform > placesList[largest].platform)
         largest = right;
 
@@ -932,7 +933,7 @@ void heapify(int n, int i)
 
 void heapSortForSpotsNearPlatform(void)
 {
-    for (int i = (glbCntforPlacesList / 2) - 1; i >= 0; i--)
+    for (int i = glbCntforPlacesList / 2 - 1; i >= 0; i--)
         heapify(glbCntforPlacesList, i);
 
     for (int i = glbCntforPlacesList - 1; i > 0; i--)
@@ -940,9 +941,6 @@ void heapSortForSpotsNearPlatform(void)
         swapSNS(&placesList[0], &placesList[i]);
         heapify(i, 0);
     }
-
-    for (int i = 0; i < glbCntforPlacesList / 2; i++)
-        swapSNS(&placesList[i], &placesList[glbCntforPlacesList - i - 1]);
 }
 
 void touristSpotNearPlatform(void)
