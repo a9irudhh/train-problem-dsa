@@ -23,6 +23,13 @@ int main()
             cityPromotions();
             break;
 
+        case 2:
+            getPlatformAssistance();
+            break;
+
+        case 3:
+        //     noteTaking();
+            break;
         default:
             printf("Please Enter a Valid Choice\n\n");
             break;

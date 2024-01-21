@@ -11,7 +11,7 @@
 #include <time.h>
 #include <sys/stat.h>
 #include <stdbool.h>
-
+#include <limits.h>
 // Variable to capture the time details
 time_t myTime;
 
@@ -26,12 +26,17 @@ typedef struct cityPromotionStruct
     char description[300];
 } CPS;
 
-typedef struct loadHashedPassword
+typedef struct hashedPasswordsStruct
 {
     char loadedName[20];
     unsigned long loadedHashedPassword;
-} LHP;
+} HPS;
 
+typedef struct spotsNearPlatformStruct
+{
+    int platform;
+    char places[100];
+} SNS;
 // Function Declarations
 
 void writeLog(char *, char *, char *);
@@ -46,7 +51,7 @@ void viewTopCity(void);
 int loadFileCityPromotions(void);
 void quickSortForTopCity(int, int);
 int partition(int, int);
-void swap(CPS *, CPS *);
+void swapCPS(CPS *, CPS *);
 void searchForCity(void);
 void getFeedbackOnCity(void);
 int addFeedback(char *, char *, char *);
@@ -63,8 +68,16 @@ int countWords(char *);
 int searchInFile(char *);
 void loadHshdpsdFromFile(void);
 void mergeSortForPassword(void);
-void merge(LHP *, int, LHP *, int, LHP *);
-void mergeSort(LHP *, int);
+void merge(HPS *, int, HPS *, int, HPS *);
+void mergeSort(HPS *, int);
 int binarySearchForUnrecUser(unsigned long);
 
+void getPlatformAssistance(void);
+void menuForPlatformAssistance(void);
+void interPlatformCommute(void);
+void dijkstra(int, int, int);
+void touristSpotNearPlatform(void);
+int loadSpotsNearPlatformFile(void);
+void heapSortForSpotsNearPlatform(void);
+// void noteTaking(void);
 #endif // PASSENGERCOMFORT_H_INCLUDED

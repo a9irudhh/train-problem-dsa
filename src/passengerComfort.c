@@ -8,18 +8,33 @@
 CPS dataToDisplay[100];
 CPS duplicateDataDisplay[100];
 CPS searchHistory[100];
-LHP hashedPasswordsCopy[100];
-
+HPS hashedPasswordsCopy[100];
+SNS placesList[100];
 // necessary global count
 // used in maintaining overall data count
 int globalCount = 0;
 int glbCntForHashedPasswords = 0;
+int glbCntforPlacesList = 0;
 int maxHashedPsswords = 0;
 int historyCount = 0;
 int duplicateDataCount = 0;
 int feedBackCount = 0;
 char userName[20];
 char password[7];
+
+// weight matrix to show the distance between any 2 platforms
+int weightMatrix[10][10] = {
+    {0, 2, 999999, 999999, 999999, 999999, 5, 999999, 999999, 999999},
+    {2, 0, 3, 999999, 2, 999999, 999999, 10, 999999, 999999},
+    {999999, 3, 0, 5, 999999, 999999, 8, 999999, 999999, 2},
+    {999999, 999999, 5, 0, 3, 999999, 999999, 999999, 999999, 999999},
+    {999999, 2, 999999, 3, 0, 5, 999999, 7, 999999, 999999},
+    {999999, 999999, 999999, 999999, 5, 0, 999999, 999999, 4, 2},
+    {5, 999999, 8, 999999, 999999, 999999, 0, 3, 999999, 999999},
+    {999999, 10, 999999, 999999, 7, 999999, 3, 0, 6, 999999},
+    {999999, 999999, 999999, 999999, 999999, 4, 999999, 6, 0, 2},
+    {999999, 999999, 2, 999999, 999999, 2, 999999, 999999, 2, 0}};
+
 // definitions of all the functions which I have used in my code
 
 // Function:     openLog
@@ -35,7 +50,7 @@ void openLog()
     if (flog == NULL)
         printf("Unable to open log file. No log status will be captured.");
     else
-        fprintf(flog, "%s", "_________________________START OF ITERATION________________________");
+        fprintf(flog, "%s", "-----------------------START OF ITERATION-----------------------");
 
     fprintf(flog, "%s", "\n\n");
 }
@@ -49,7 +64,7 @@ void closeLog()
     if (flog != NULL)
     {
         // Add a message to indicate end of a iteration
-        fprintf(flog, "%s", "_________________________END OF ITERATION________________________");
+        fprintf(flog, "%s", "-----------------------END OF ITERATION-----------------------");
         fprintf(flog, "%s", "\n\n");
 
         // Close the file pointer
@@ -57,11 +72,11 @@ void closeLog()
     }
 }
 
-void writeLog(char *function_name, char *status, char *message)
+void writeLog(char *functionName, char *status, char *message)
 {
     // Write the appropriate log message with associated run time
     myTime = time(NULL);
-    fprintf(flog, "%s %s : %s --> %s\n\n", ctime(&myTime), function_name, status, message);
+    fprintf(flog, "%s %s : %s -> %s\n\n", ctime(&myTime), functionName, status, message);
 }
 
 void welcomeMessage(void)
@@ -81,16 +96,12 @@ void welcomeMessage(void)
 void menuForPassengerComfort(void)
 {
     // system("cls");
-    printf("\n\t\t\t  ------------------MENU------------------\n\n");
-    printf("-- Enter 1 to View the City's Unique Attractions\n");
-    printf("-- Enter 2 to        \n");
-    printf("-- Enter 3 to        \n");
-    printf("-- Enter 4 to        \n");
-    printf("-- Enter 5 to        \n");
-    printf("-- Enter 6 to        \n");
-    printf("-- Enter 7 to        \n");
-    printf("-- Enter 8 to        \n");
-    printf("-- Enter 9 to        \n\n");
+    printf("\n\t\t\t  \033[1;36m------------------MENU------------------\033[0m\n\n");
+    printf("=> Enter 1 to View the City's Unique Attractions\n");
+    printf("=> Enter 2 to Get Platform Assistance\n");
+    printf("=> Enter 3 to        \n");
+    printf("=> Enter 4 to        \n");
+    printf("=> Enter 5 to        \n\n");
 
     printf("Enter 0 to exit the program :( \n  =>");
     return;
@@ -132,7 +143,7 @@ int loadFileCityPromotions(void)
  * Return Type: void
  * Description: Uses a temporary struct to swap the input 2 structs
  **/
-void swap(CPS *a, CPS *b)
+void swapCPS(CPS *a, CPS *b)
 {
     CPS temp = *a;
     *a = *b;
@@ -165,12 +176,12 @@ int partition(int low, int high)
 
         if (i < j)
         {
-            swap(&dataToDisplay[i], &dataToDisplay[j]);
+            swapCPS(&dataToDisplay[i], &dataToDisplay[j]);
         }
 
     } while (i < j);
 
-    swap(&dataToDisplay[low], &dataToDisplay[j]);
+    swapCPS(&dataToDisplay[low], &dataToDisplay[j]);
 
     return j;
 }
@@ -200,7 +211,7 @@ void mergeSortForPassword(void)
     return;
 }
 
-void merge(LHP *B, int p, LHP *C, int q, LHP *A)
+void merge(HPS *B, int p, HPS *C, int q, HPS *A)
 {
     int i = 0, j = 0, k = 0;
 
@@ -239,15 +250,15 @@ void merge(LHP *B, int p, LHP *C, int q, LHP *A)
     }
 }
 
-void mergeSort(LHP *A, int n)
+void mergeSort(HPS *A, int n)
 {
     if (n > 1)
     {
         int mid = n / 2;
 
         // Create arrays B and C to hold the two halves
-        LHP *B = (LHP *)malloc(mid * sizeof(LHP));
-        LHP *C = (LHP *)malloc((n - mid) * sizeof(LHP));
+        HPS *B = (HPS *)malloc(mid * sizeof(HPS));
+        HPS *C = (HPS *)malloc((n - mid) * sizeof(HPS));
 
         // Copy elements to B and C
         for (int i = 0; i < mid; i++)
@@ -378,13 +389,13 @@ int addFeedback(char *username, char *city, char *feedback)
 
 int addHashedPasswordToFile(char *username, unsigned long hashedValue)
 {
-    FILE *file = fopen("textPasswordData.txt", "a+");
+    FILE *fAddHash = fopen("textPasswordData.txt", "a+");
 
-    if (file == NULL)
+    if (fAddHash == NULL)
         return FAILURE;
 
-    fprintf(file, "%s\t%lu\n", username, hashedValue);
-    fclose(file);
+    fprintf(fAddHash, "%s\t%lu\n", username, hashedValue);
+    fclose(fAddHash);
 
     printf("\nPassword Accepted\n");
     return SUCCESS;
@@ -442,7 +453,7 @@ char *createAccount(void)
     system("cls");
     unsigned long secreteNumber;
 moreThan2Words:
-    printf("Please Enter Your Name[single word]: ");
+    printf("Please Enter Your Username[single word]: ");
     scanf(" %19[^\n]s", userName); // Corrected format specifier
 
     userName[strcspn(userName, "\n")] = 0;
@@ -596,7 +607,7 @@ int rabinKarpSearchInitiater(char *userName)
     status = searchInFile(userName);
     if (status != 1)
     {
-        printf("Account with Name %s doesnt exist\n", tempUsername);
+        printf("Account with Username %s doesnt exist\n", tempUsername);
         return FAILURE;
     }
 
@@ -626,7 +637,7 @@ int rabinKarpSearchInitiater(char *userName)
 
 char *getLoginCredentials(void)
 {
-    printf("Please Enter Your Name: ");
+    printf("Please Enter Your User name: ");
     scanf(" %19[^\n]s", userName);
 
     while (getchar() != '\n')
@@ -712,7 +723,7 @@ void getFeedbackOnCity(void)
 
 void menuForCityPromotions(void)
 {
-    printf("\n\t\t------------------MENU------------------\n\n");
+    printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
     printf("-- Enter 1 to View City's Top Tourist spot\n");
     printf("-- Enter 2 to Search for the Tourist Spot's Description\n");
     printf("-- Enter 3 to Give Feedback on a City\n\n");
@@ -732,6 +743,7 @@ void cityPromotions(void)
         switch (choice)
         {
         case 0:
+            system("cls");
             return;
 
         case 1:
@@ -741,10 +753,236 @@ void cityPromotions(void)
             searchForCity(); // implemented Bfss to search
             break;
         case 3:
-            getFeedbackOnCity(); //hashing, rabinKarp, constructive algo
+            getFeedbackOnCity(); // hashing, rabinKarp, constructive algo
             break;
         case 4:
             break;
+        default:
+            printf("Please Enter a Valid Choice\n\n");
+            break;
+        }
+    }
+}
+
+// --------------------------------------------new functionality related
+
+void menuForPlatformAssistance(void)
+{
+    printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
+    printf("-- Enter 1 to Guide you for Inter-Platform Commutation\n");
+    printf("-- Enter 2 to Guide you for Platform Near to Tourist Spot\n");
+    printf("-- Enter 3 to               \n\n");
+    printf("Enter 0 to go back \n  =>");
+}
+
+/**
+ * Function Name: dijkstra
+ * Input Params:
+ *   - weightMatrix: Adjacency matrix representing the weight between platforms
+ *   - src: Source platform
+ *   - dest: Destination platform
+ *   - numPlatforms: Number of platforms
+ * Return Type: void
+ * Description: Implementation of Dijkstra's Algorithm to find the shortest path
+ **/
+void dijkstra(int src, int dest, int numPlatforms)
+{
+    int *dist = (int *)malloc(sizeof(int) * numPlatforms);
+    int *visited = (int *)malloc(sizeof(int) * numPlatforms);
+    int *parent = (int *)malloc(sizeof(int) * numPlatforms);
+
+    for (int i = 0; i < numPlatforms; i++)
+    {
+        dist[i] = INT_MAX;
+        visited[i] = 0;
+        parent[i] = -1; // Initialize parent array to -1
+    }
+
+    dist[src] = 0;
+
+    for (int count = 0; count < numPlatforms - 1; count++)
+    {
+        int minDist = INT_MAX, minIndex;
+
+        for (int v = 0; v < numPlatforms; v++)
+        {
+            if (!visited[v] && dist[v] <= minDist)
+            {
+                minDist = dist[v];
+                minIndex = v;
+            }
+        }
+
+        visited[minIndex] = 1;
+
+        for (int v = 0; v < numPlatforms; v++)
+        {
+            if (!visited[v] && weightMatrix[minIndex][v] && dist[minIndex] != INT_MAX &&
+                dist[minIndex] + weightMatrix[minIndex][v] < dist[v])
+            {
+                dist[v] = dist[minIndex] + weightMatrix[minIndex][v];
+                parent[v] = minIndex; // Update parent array
+            }
+        }
+    }
+
+    // Build the path
+    int currentPlatform = dest;
+    int *path = (int *)malloc(sizeof(int) * numPlatforms);
+    int pathLength = 0;
+
+    while (currentPlatform != -1)
+    {
+        path[pathLength++] = currentPlatform;
+        currentPlatform = parent[currentPlatform];
+    }
+
+    // Print the path in reverse order
+    printf("Shortest distance between Platform %d and Platform %d is: %d\n", src + 1, dest + 1, dist[dest]);
+    printf("Path: ");
+    for (int i = pathLength - 1; i >= 0; i--)
+    {
+        printf("%d", path[i] + 1);
+        if (i > 0)
+            printf(" -> ");
+    }
+    printf("\n");
+
+    // Free allocated memory
+    free(dist);
+    free(visited);
+    free(parent);
+    free(path);
+}
+
+void interPlatformCommute(void)
+{
+    int initialPlatform, finalPlatform;
+
+    printf("Enter Current platform (1-10): ");
+    scanf("%d", &initialPlatform);
+
+    printf("Enter the Desired Destination Platform (1-10): ");
+    scanf("%d", &finalPlatform);
+
+    if (initialPlatform < 1 || initialPlatform > 10 || finalPlatform < 1 || finalPlatform > 10)
+    {
+        printf("Invalid platform numbers. Platforms should be between 1 and 10.\n");
+        return;
+    }
+
+    if (finalPlatform == initialPlatform)
+    {
+        printf("You are Already In the Destination.\n");
+        return;
+    }
+
+    dijkstra(initialPlatform - 1, finalPlatform - 1, 10);
+    return;
+}
+
+int loadSpotsNearPlatformFile(void)
+{
+    FILE *fSpots;
+
+    // Open the file in read mode
+    fSpots = fopen("textSpotsNearPlatform.txt", "r");
+
+    // Check if the file was successfully opened
+    if (fSpots == NULL)
+    {
+        writeLog("loadFileCityPromotions", "FILE_OPEN_ERROR", "Unable to open the city promotion file");
+        return FAILURE;
+    }
+
+    // Until the end of the file, read all the file data
+    while (!feof(fSpots))
+    {
+        fscanf(fSpots, "%d\t%[^\n]s", &placesList[glbCntforPlacesList].platform, placesList[glbCntforPlacesList].places);
+        glbCntforPlacesList++;
+    }
+
+    fclose(fSpots);
+    return SUCCESS;
+}
+
+void swapSNS(SNS *a, SNS *b)
+{
+    SNS temp = *a;
+    *a = *b;
+    *b = temp;
+}
+void heapify(int n, int i)
+{
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && placesList[left].platform > placesList[largest].platform)
+        largest = right;
+    if (right < n && placesList[right].platform > placesList[largest].platform)
+        largest = right;
+
+    if (largest != i)
+    {
+        swapSNS(&placesList[i], &placesList[largest]);
+        heapify(n, largest);
+    }
+}
+
+void heapSortForSpotsNearPlatform(void)
+{
+    for (int i = (glbCntforPlacesList / 2) - 1; i >= 0; i--)
+        heapify(glbCntforPlacesList, i);
+
+    for (int i = glbCntforPlacesList - 1; i > 0; i--)
+    {
+        swapSNS(&placesList[0], &placesList[i]);
+        heapify(i, 0);
+    }
+
+    for (int i = 0; i < glbCntforPlacesList / 2; i++)
+        swapSNS(&placesList[i], &placesList[glbCntforPlacesList - i - 1]);
+}
+
+void touristSpotNearPlatform(void)
+{
+    status = loadSpotsNearPlatformFile();
+    if (status != 1)
+    {
+        printf("File Open Error.\n");
+        return;
+    }
+
+    heapSortForSpotsNearPlatform();
+    for (int i = 0; i < glbCntforPlacesList; i++)
+        printf("%d\t%s\n", placesList[i].platform, placesList[i].places);
+}
+
+void getPlatformAssistance(void)
+{
+    choice = 0;
+    while (true)
+    {
+        menuForPlatformAssistance();
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 0:
+            system("cls");
+            return;
+
+        case 1:
+            interPlatformCommute();
+            break;
+
+        case 2:
+            touristSpotNearPlatform();
+            break;
+
+        case 3:
+
         default:
             printf("Please Enter a Valid Choice\n\n");
             break;
