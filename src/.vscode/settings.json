@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "xiosbase": "c",
-        "xutility": "c"
+        "xutility": "c",
+        "locals.h": "c"
     }
 }

@@ -1,5 +1,10 @@
+// necessary headerfiles needed for implementing the below functionalities
+
+// passengerComfort.h for function declaration
 #include "passengerComfort.h"
+// settings.h to include Macros like SUCCESS, FAILURE etc
 #include "settings.h"
+// locals.h to include local variables which are used multiple times
 #include "locals.h"
 
 // necessary global declaration
@@ -11,20 +16,14 @@ CPS searchHistory[100];
 HPS hashedPasswordsCopy[100];
 SNS placesList[100];
 DDT *root = NULL;
-// necessary global count
-// used in maintaining overall data count
-int globalCount = 0;
-int glbCntForHashedPasswords = 0;
-int glbCntforPlacesList = 0;
-int maxHashedPsswords = 0;
-int historyCount = 0;
-int duplicateDataCount = 0;
-int feedBackCount = 0;
+
+// These are used when user is prompted to enter the details wherever required
 char userName[20];
 char password[7];
 char cityName[30];
 char dormitoryType[30];
-// weight matrix to show the distance between any 2 platforms
+
+// weight matrix to show the distance between any 2 platforms in meters
 int weightMatrix[10][10] = {
     {0, 200, 999999, 999999, 999999, 999999, 500, 999999, 999999, 999999},
     {200, 0, 300, 999999, 200, 999999, 999999, 1000, 999999, 999999},
@@ -36,19 +35,6 @@ int weightMatrix[10][10] = {
     {999999, 1000, 999999, 999999, 700, 999999, 300, 0, 600, 999999},
     {999999, 999999, 999999, 999999, 999999, 400, 999999, 600, 0, 200},
     {999999, 999999, 200, 999999, 999999, 200, 999999, 999999, 200, 0}};
-
-// adjacency Matrix to show the connection between two platforms
-int adjacencyMatrix[10][10] = {
-    {0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
-    {1, 0, 1, 0, 1, 0, 0, 1, 0, 0},
-    {0, 1, 0, 1, 0, 0, 1, 0, 0, 1},
-    {0, 0, 1, 0, 1, 0, 0, 0, 0, 0},
-    {0, 1, 0, 1, 0, 1, 0, 1, 0, 0},
-    {0, 0, 0, 0, 1, 0, 0, 0, 1, 1},
-    {1, 0, 1, 0, 0, 0, 0, 1, 0, 0},
-    {0, 1, 0, 0, 1, 0, 1, 0, 1, 0},
-    {0, 0, 0, 0, 0, 1, 0, 1, 0, 1},
-    {0, 0, 1, 0, 0, 1, 0, 0, 1, 0}};
 
 // definitions of all the functions which I have used in my code
 
@@ -87,6 +73,13 @@ void closeLog()
     }
 }
 
+// Function:     writeLog
+// Description:  Opens the log file to write the success or failure status along with a message.
+// Input params:
+//   - char *functionName: Name of the function or operation being logged.
+//   - char *status: Success or failure status to be logged.
+//   - char *message: Additional information or message to be logged.
+// Return Type:  void
 void writeLog(char *functionName, char *status, char *message)
 {
     // Write the appropriate log message with associated run time
@@ -94,6 +87,10 @@ void writeLog(char *functionName, char *status, char *message)
     fprintf(flog, "%s %s : %s -> %s\n\n", ctime(&myTime), functionName, status, message);
 }
 
+// Function:     welcomeMessage
+// Description:  Displays a welcome message for the Passenger Comfort Module, clearing the screen and presenting a title.
+// Input param:  None
+// Return Type:  None
 void welcomeMessage(void)
 {
     system("cls");
@@ -108,25 +105,25 @@ void welcomeMessage(void)
     return;
 }
 
+// Function:     menuForPassengerComfort
+// Description:  Displays a menu for the Passenger Comfort Module, providing options for user interaction.
+// Input param:  None
+// Return Type:  None
 void menuForPassengerComfort(void)
 {
-    // system("cls");
+    // Display the menu with different options
     printf("\n\t\t\t  \033[1;36m------------------MENU------------------\033[0m\n\n");
     printf("=> Enter 1 to View the City's Unique Attractions\n");
     printf("=> Enter 2 to Get Platform Assistance\n");
-    printf("=> Enter 3 to        \n");
-    printf("=> Enter 4 to        \n");
-    printf("=> Enter 5 to        \n\n");
-
+    printf("=> Enter 3 to        \n\n");
     printf("Enter 0 to exit the program :( \n  =>");
     return;
 }
 
-void welcomeCityPromotions(void)
-{
-    ;
-}
-
+// Function:     loadFileCityPromotions
+// Description:  Reads data from the "textCityPromotionDataBase.txt" file to populate the City Promotion data structure.
+// Input param:  None
+// Return Type:  int - Returns SUCCESS (1) if the file is successfully loaded, otherwise returns FAILURE (0).
 int loadFileCityPromotions(void)
 {
     FILE *fp;
@@ -144,22 +141,28 @@ int loadFileCityPromotions(void)
     // Until the end of the file, read all the file data
     while (!feof(fp))
     {
-        fscanf(fp, "%lf\t%[^\n]s", &dataToDisplay[globalCount].rating, dataToDisplay[globalCount].description);
-        globalCount++;
+        fscanf(fp, "%lf\t%[^\n]s", &dataToDisplay[glbCntForTopCities].rating, dataToDisplay[glbCntForTopCities].description);
+        glbCntForTopCities++;
     }
 
     fclose(fp);
-    return 1;
+    return SUCCESS;
 }
 
 /**
- * Function Name: swap
- * Input Params: Pointers to struct 1 and struct 2
+ * Function Name: swapCPS
+ * Input Params: Pointers to struct 1 (a) and struct 2 (b)
  * Return Type: void
- * Description: Uses a temporary struct to swap the input 2 structs
+ * Description: Swaps the content of two CPS (City Promotion Struct) instances using a temporary struct.
+ *
+ * CPS* a: Pointer to the first CPS struct
+ * CPS* b: Pointer to the second CPS struct
+ *
+ * The function creates a temporary CPS struct and swaps the content of struct a with struct b, and vice versa.
  **/
 void swapCPS(CPS *a, CPS *b)
 {
+    // a temporary CPS struct to use it for copying values
     CPS temp = *a;
     *a = *b;
     *b = temp;
@@ -167,9 +170,10 @@ void swapCPS(CPS *a, CPS *b)
 
 /**
  * Function Name: partition
- * Input Params: Lower limit and higher limit of the array
- * Return Type: int
- * Description: Sub-function of the quick sort which partitions the array and returns the index
+ * Input Params: Lower limit (low) and higher limit (high) of the array
+ * Return Type: int - Returns the index used for partitioning the array in the quicksort algorithm
+ * Description: Sub-function of the quicksort algorithm that partitions the array based on a pivot element's rating.
+ *
  **/
 int partition(int low, int high)
 {
@@ -203,10 +207,11 @@ int partition(int low, int high)
 
 /**
  * Function Name: quickSortForTopCity
- * Input Params: Lower limit and higher limit of the array
+ * Input Params: Lower limit (low) and higher limit (high) of the array
  * Return Type: void
- * Description: Efficient recursive approach to sort a given array
- **/
+ * Description: Efficient recursive approach to sort the top city data array using the quicksort algorithm.
+ *
+ */
 void quickSortForTopCity(int low, int high)
 {
     if (low < high)
@@ -218,6 +223,13 @@ void quickSortForTopCity(int low, int high)
     }
 }
 
+/**
+ * Function Name: mergeSortForPassword
+ * Description: Initiates the merge sort algorithm for the hashed passwords array.
+ * Input param: NULL
+ * Return Type: NULL
+ **/
+
 void mergeSortForPassword(void)
 {
     if (glbCntForHashedPasswords > 1)
@@ -225,6 +237,17 @@ void mergeSortForPassword(void)
 
     return;
 }
+
+/**
+ * Function Name: merge
+ * Description: Merges two sorted arrays B and C into a single array A.
+ * Input Params:
+ *   - HPS *B: Pointer to the first sorted array
+ *   - int p: Size of array B
+ *   - HPS *C: Pointer to the second sorted array
+ *   - int q: Size of array C
+ *   - HPS *A: Pointer to the merged array
+ * Return Type: NULL*/
 
 void merge(HPS *B, int p, HPS *C, int q, HPS *A)
 {
@@ -265,6 +288,15 @@ void merge(HPS *B, int p, HPS *C, int q, HPS *A)
     }
 }
 
+/**
+ * Function Name: mergeSort
+ * Description: Applies the merge sort algorithm to efficiently sort an array of hashed passwords.
+ * Input Params:
+ *   - HPS *A: Pointer to the array of hashed passwords to be sorted
+ *   - int n: Size of the array A
+ * Return Type: NULL
+ **/
+
 void mergeSort(HPS *A, int n)
 {
     if (n > 1)
@@ -298,6 +330,15 @@ void mergeSort(HPS *A, int n)
         free(C);
     }
 }
+
+/**
+ * Function Name: bruteForceStringSearch
+ * Description: Performs a brute-force string search to find the first occurrence of a pattern in a text.
+ * Input Params:
+ *   - char *T: Pointer to the text where the search is performed
+ *   - char *P: Pointer to the pattern being searched for
+ * Return Type: int - Returns the index of the first occurrence of the pattern in the text, or -1 if not found.
+ **/
 int bruteForceStringSearch(char *T, char *P)
 {
     int n = strlen(T);
@@ -314,6 +355,12 @@ int bruteForceStringSearch(char *T, char *P)
     return -1;
 }
 
+/**
+ * Function Name: viewTopCity
+ * Description: Loads and displays information about the top-rated city promotion.
+ * Input Params: None
+ * Return Type: None
+ * */
 void viewTopCity(void)
 {
     status = loadFileCityPromotions();
@@ -323,18 +370,24 @@ void viewTopCity(void)
         return;
     }
 
-    quickSortForTopCity(0, globalCount - 1);
+    quickSortForTopCity(0, glbCntForTopCities - 1);
 
     printf("RATING  REVIEW\n\n");
-    printf("%.1lf\t%s\n", dataToDisplay[globalCount - 1].rating, dataToDisplay[globalCount - 1].description);
+    printf("%.1lf\t%s\n", dataToDisplay[glbCntForTopCities - 1].rating, dataToDisplay[glbCntForTopCities - 1].description);
 
-    globalCount = 0;
+    glbCntForTopCities = 0;
     return;
 }
 
+/**
+ * Function Name: searchForCity
+ * Description: Searches and displays city promotions based on a user-entered search string.
+ * Input Params: None
+ * Return Type: None
+ **/
 void searchForCity(void)
 {
-    globalCount = 0;
+    glbCntForTopCities = 0;
     duplicateDataCount = 0;
 
     status = loadFileCityPromotions();
@@ -355,7 +408,7 @@ void searchForCity(void)
     if (strlen(searchString) == 0)
     {
         // If the search string is empty, display all records
-        for (int i = 0; i < globalCount; i++)
+        for (int i = 0; i < glbCntForTopCities; i++)
         {
             printf("RATING  REVIEW\n\n");
             printf("%.1lf\t%s\n", dataToDisplay[i].rating, dataToDisplay[i].description);
@@ -363,7 +416,7 @@ void searchForCity(void)
         return;
     }
 
-    for (int i = 0; i < globalCount; i++)
+    for (int i = 0; i < glbCntForTopCities; i++)
     {
         int k = bruteForceStringSearch(dataToDisplay[i].description, searchString);
         if (k != -1)
@@ -389,6 +442,15 @@ void searchForCity(void)
     return;
 }
 
+/**
+ * Function Name: addFeedback
+ * Description: Adds user feedback to a feedback database file.
+ * Input Params:
+ *   - char *username: Pointer to the username providing the feedback
+ *   - char *city: Pointer to the city associated with the feedback
+ *   - char *feedback: Pointer to the user's feedback
+ * Return Type: int - Returns SUCCESS (1) if feedback is added successfully, otherwise FAILURE (0).
+ * */
 int addFeedback(char *username, char *city, char *feedback)
 {
     FILE *file = fopen("textFeedbackDataBase.txt", "a+");
@@ -403,6 +465,14 @@ int addFeedback(char *username, char *city, char *feedback)
     return SUCCESS;
 }
 
+/**
+ * Function Name: addHashedPasswordToFile
+ * Description: Adds a hashed password entry to a password data file.
+ * Input Params:
+ *   - char *username: Pointer to the username associated with the hashed password
+ *   - unsigned long hashedValue: The hashed password value to be added
+ * Return Type: int - Returns SUCCESS (1) if the hashed password entry is added successfully, otherwise FAILURE (0).
+ * */
 int addHashedPasswordToFile(char *username, unsigned long hashedValue)
 {
     FILE *fAddHash = fopen("textPasswordData.txt", "a+");
@@ -416,7 +486,12 @@ int addHashedPasswordToFile(char *username, unsigned long hashedValue)
     printf("\nPassword Accepted\n");
     return SUCCESS;
 }
-
+/**
+ * Function Name: loadHshdpsdFromFile
+ * Description: Loads hashed passwords from a file into an array.
+ * Input Params: None
+ * Return Type: None
+ * */
 void loadHshdpsdFromFile(void)
 {
     FILE *fhash = fopen("textPasswordData.txt", "r");
@@ -433,6 +508,13 @@ void loadHshdpsdFromFile(void)
     fclose(fhash);
 }
 
+/**
+ * Function Name: countWords
+ * Description: Counts the number of words in a given input string.
+ * Input Params:
+ *   - char *input: Pointer to the input string
+ * Return Type: int - Returns the count of words in the input string.
+ * */
 int countWords(char *input)
 {
     int count = 0;
@@ -450,6 +532,13 @@ int countWords(char *input)
     return count;
 }
 
+/**
+ * Function Name: getHashValueDjb2
+ * Description: Calculates the DJB2 hash value for a given input string.
+ * Input Params:
+ *   - char *tempPassword: Pointer to the input string for which the hash is calculated
+ * Return Type: unsigned long - Returns the DJB2 hash value for the input string.
+ * */
 unsigned long getHashValueDjb2(char *tempPassword)
 {
 
@@ -457,13 +546,17 @@ unsigned long getHashValueDjb2(char *tempPassword)
     int c;
 
     while ((c = *tempPassword++))
-    {
         hash = ((hash << 5) + hash) + c; // hash * 33 + c
-    }
 
     return hash;
 }
 
+/**
+ * Function Name: createAccount
+ * Description: Handles the process of creating a user account.
+ * Input Params: None
+ * Return Type: char * - Returns a pointer to the created username upon success, or NULL in case of errors.
+ * */
 char *createAccount(void)
 {
     system("cls");
@@ -514,6 +607,13 @@ moreThan2Words:
     return userName;
 }
 
+/**
+ * Function Name: searchInFile
+ * Description: Searches for a target string in a file using a specific search algorithm.
+ * Input Params:
+ *   - char *target: Pointer to the target string to be searched in the file
+ * Return Type: int - Returns SUCCESS (1) if the target string is found, otherwise FAILURE (0) or an error code (-1).
+ * */
 int searchInFile(char *target)
 {
     FILE *file = fopen("textPasswordData.txt", "r");
@@ -548,6 +648,14 @@ int searchInFile(char *target)
     return FAILURE;
 }
 
+/**
+ * Function Name: rabinKarpSearch
+ * Description: Implements the Rabin-Karp string search algorithm to find a target string in a token.
+ * Input Params:
+ *   - char *token: Pointer to the token (text) where the search is performed
+ *   - char *target: Pointer to the target string (pattern) to be searched in the token
+ * Return Type: int - Returns SUCCESS (1) if the target string is found, otherwise -1.
+ * */
 int rabinKarpSearch(char *token, char *target)
 {
     // text-> token, pattern ->target
@@ -579,6 +687,17 @@ int rabinKarpSearch(char *token, char *target)
     return -1; // Pattern not found
 }
 
+/**
+ * Function Name: recalculateHash
+ * Description: Recalculates the hash value for a rolling hash based on a sliding window.
+ * Input Params:
+ *   - char *str: Pointer to the string for which the hash is recalculated
+ *   - int oldIndex: Index of the character to be removed from the current hash window
+ *   - int newIndex: Index of the character to be included in the current hash window
+ *   - unsigned long long oldHash: Previous hash value before recalculation
+ *   - int patternLength: Length of the pattern (size of the hash window)
+ * Return Type: unsigned long long - Returns the recalculated hash value.
+ * */
 unsigned long long recalculateHash(char *str, int oldIndex, int newIndex, unsigned long long oldHash, int patternLength)
 {
     unsigned long long newHash = oldHash - str[oldIndex] * pow(101, patternLength - 1);
@@ -588,6 +707,14 @@ unsigned long long recalculateHash(char *str, int oldIndex, int newIndex, unsign
     return newHash;
 }
 
+/**
+ * Function Name: createHash
+ * Description: Creates a hash value for a given string using polynomial rolling hash.
+ * Input Params:
+ *   - char *str: Pointer to the string for which the hash is created
+ *   - int length: Length of the string
+ * Return Type: unsigned long long - Returns the hash value for the given string.
+ * */
 unsigned long long createHash(char *str, int length)
 {
     unsigned long long hash = 0;
@@ -598,6 +725,13 @@ unsigned long long createHash(char *str, int length)
     return hash;
 }
 
+/**
+ * Function Name: binarySearchForUnrecUser
+ * Description: Performs binary search for an unmatched hashed password in the password database.
+ * Input Params:
+ *   - unsigned long match: The hashed password to be searched for
+ * Return Type: int - Returns SUCCESS (1) if the hashed password is found, otherwise FAILURE (0).
+ * */
 int binarySearchForUnrecUser(unsigned long match)
 {
     int start = 0, end = glbCntForHashedPasswords;
@@ -615,6 +749,13 @@ int binarySearchForUnrecUser(unsigned long match)
     return FAILURE;
 }
 
+/**
+ * Function Name: rabinKarpSearchInitiater
+ * Description: Initiates the Rabin-Karp string search for a user's hashed password.
+ * Input Params:
+ *   - char *userName: Pointer to the username for which the password search is initiated
+ * Return Type: int - Returns SUCCESS (1) if the hashed password is found, otherwise FAILURE (0).
+ * */
 int rabinKarpSearchInitiater(char *userName)
 {
     char tempUsername[20];
@@ -651,6 +792,13 @@ int rabinKarpSearchInitiater(char *userName)
     return SUCCESS;
 }
 
+/**
+ * Function Name: getLoginCredentials
+ * Description: Obtains login credentials from the user, including the username and password.
+ * Input Params: NULL
+ * Return Type: char* - Returns the username if login is successful, otherwise returns NULL.
+ * */
+
 char *getLoginCredentials(void)
 {
     printf("Please Enter Your User name: ");
@@ -665,6 +813,14 @@ char *getLoginCredentials(void)
     return userName;
 }
 
+/**
+ * Function Name: giveFeedbackPromt
+ * Description: Prompts the user to provide feedback for a specific city and adds it to the feedback database.
+ * Input Params:
+ *   - char *userName: Pointer to the username for which feedback is provided
+ * Return Type: NULL
+ *
+ */
 void giveFeedbackPromt(char *userName)
 {
     char userDescription[100];
@@ -694,6 +850,12 @@ void giveFeedbackPromt(char *userName)
     return;
 }
 
+/**
+ * Function Name: getFeedbackOnCity
+ * Description: Facilitates the process of obtaining feedback on a city based on user input.
+ * Input Params: NULL
+ * Return Type: NULL
+ * */
 void getFeedbackOnCity(void)
 {
     system("cls");
@@ -737,6 +899,12 @@ void getFeedbackOnCity(void)
     }
 }
 
+/**
+ * Function Name: menuForCityPromotions
+ * Description: Displays a menu for city promotions, allowing users to choose various options.
+ * Input Params: NULL
+ * Return Type: NULL
+ * */
 void menuForCityPromotions(void)
 {
     printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
@@ -747,6 +915,13 @@ void menuForCityPromotions(void)
     return;
 }
 
+/**
+ * Function Name: cityPromotions
+ * Description: Facilitates city promotions by presenting a menu and handling user choices.
+ * Input Params: NULL
+ * Return Type: NULL
+ *
+ */
 void cityPromotions(void)
 {
     // welcomeCityPromotions();
@@ -782,6 +957,12 @@ void cityPromotions(void)
 
 // --------------------------------------------new functionality related
 
+/**
+ * Function Name: menuForPlatformAssistance
+ * Description: Displays a menu for platform assistance, allowing users to choose various options.
+ * Input Params: NULL
+ * Return Type: NULL
+ * */
 void menuForPlatformAssistance(void)
 {
     printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
@@ -799,8 +980,9 @@ void menuForPlatformAssistance(void)
  *   - dest: Destination platform
  *   - numPlatforms: Number of platforms
  * Return Type: void
- * Description: Implementation of Dijkstra's Algorithm to find the shortest path
- **/
+ * Description: Implementation of Dijkstra's Algorithm to find the shortest path between two platforms.
+ *   This function calculates the shortest path between the source (src) and destination (dest) platforms in a given graph
+ * represented by the weightMatrix adjacency matrix */
 void dijkstra(int src, int dest, int numPlatforms)
 {
     int *dist = (int *)malloc(sizeof(int) * numPlatforms);
@@ -871,6 +1053,10 @@ void dijkstra(int src, int dest, int numPlatforms)
     free(path);
 }
 
+// Function:     openLog
+// Description:  opens the log file to write the success or failure status
+// Input param:  NULL
+// Return Type:  NULL
 void interPlatformCommute(void)
 {
     int initialPlatform, finalPlatform;
@@ -897,6 +1083,12 @@ void interPlatformCommute(void)
     return;
 }
 
+/**
+ * Function Name: interPlatformCommute
+ * Description: Guides the user for inter-platform commute using Dijkstra's Algorithm.
+ * Input Params: NULL
+ * Return Type: void
+ * */
 int loadSpotsNearPlatformFile(void)
 {
     FILE *fSpots;
@@ -922,6 +1114,14 @@ int loadSpotsNearPlatformFile(void)
     return SUCCESS;
 }
 
+/**
+ * Function Name: swapSNS
+ * Description: Swaps the content of two SNS (Places) structures.
+ * Input Params:
+ *   - a: Pointer to the first SNS structure
+ *   - b: Pointer to the second SNS structure
+ * Return Type: void
+ **/
 void swapSNS(SNS *a, SNS *b)
 {
     SNS temp = *a;
@@ -929,6 +1129,14 @@ void swapSNS(SNS *a, SNS *b)
     *b = temp;
 }
 
+/**
+ * Function Name: heapify
+ * Description: Maintains the max-heap property for the PlacesList array.
+ * Input Params:
+ *   - n: Number of elements in the array
+ *   - i: Index of the current element
+ * Return Type: void
+ * */
 void heapify(int n, int i)
 {
     int largest = i;
@@ -947,6 +1155,12 @@ void heapify(int n, int i)
     }
 }
 
+/**
+ * Function Name: heapSortForSpotsNearPlatform
+ * Description: Sorts the 'placesList' array using the Heap Sort algorithm.
+ * Input Params: None
+ * Return Type: void
+ **/
 void heapSortForSpotsNearPlatform(void)
 {
     for (int i = glbCntforPlacesList / 2 - 1; i >= 0; i--)
@@ -959,6 +1173,15 @@ void heapSortForSpotsNearPlatform(void)
     }
 }
 
+/**
+ * Function Name: computeLPSArray
+ * Description: Computes the Longest Prefix Suffix (LPS) array for a given pattern.
+ * Input Params:
+ *   - pat: The pattern for which the LPS array is calculated.
+ *   - M: Length of the pattern.
+ *   - lps: Array to store the Longest Prefix Suffix values.
+ * Return Type: void
+ * */
 void computeLPSArray(char *pat, int M, int *lps)
 {
     // length of the previous longest prefix suffix
@@ -976,19 +1199,11 @@ void computeLPSArray(char *pat, int M, int *lps)
             lps[i] = len;
             i++;
         }
-        else // (pat[i] != pat[len])
+        else
         {
-            // This is tricky. Consider the example.
-            // AAACAAAA and i = 7. The idea is similar
-            // to search step.
             if (len != 0)
-            {
                 len = lps[len - 1];
-
-                // Also, note that we do not increment
-                // i here
-            }
-            else // if (len == 0)
+            else
             {
                 lps[i] = 0;
                 i++;
@@ -996,6 +1211,15 @@ void computeLPSArray(char *pat, int M, int *lps)
         }
     }
 }
+
+/**
+ * Function Name: kmpSearch
+ * Description: Performs the Knuth-Morris-Pratt (KMP) pattern searching algorithm.
+ * Input Params:
+ *   - txt: The text in which the pattern is searched.
+ *   - pat: The pattern to be searched in the text.
+ * Return Type: int (SUCCESS or FAILURE)
+ * */
 int kmpSearch(char *txt, char *pat)
 {
     int M = strlen(pat);
@@ -1036,7 +1260,14 @@ int kmpSearch(char *txt, char *pat)
     return FAILURE;
 }
 
-int knuthMorisPrattToSearchForPlace(char *enteredName)
+/**
+ * Function Name: knuthMorrisPrattToSearchForPlace
+ * Description: Searches for a place in the placesList using the Knuth-Morris-Pratt (KMP) algorithm.
+ * Input Params:
+ *   - enteredName: The name of the place to be searched.
+ * Return Type: int (SUCCESS with platform number or FAILURE)
+ * */
+int knuthMorrisPrattToSearchForPlace(char *enteredName)
 {
     for (int i = 0; i < glbCntforPlacesList; i++)
     {
@@ -1057,13 +1288,17 @@ int knuthMorisPrattToSearchForPlace(char *enteredName)
     return FAILURE;
 }
 
+// Function:     openLog
+// Description:  opens the log file to write the success or failure status
+// Input param:  NULL
+// Return Type:  NULL
 void searchForSpotNearPlatform(void)
 {
     printf("Enter the Place Name: ");
     scanf(" %29[^\n]s", cityName);
 
     getchar();
-    status = knuthMorisPrattToSearchForPlace(cityName);
+    status = knuthMorrisPrattToSearchForPlace(cityName);
     if (status == -1)
     {
         return;
@@ -1072,6 +1307,13 @@ void searchForSpotNearPlatform(void)
     guideToPlatform(status);
 }
 
+/**
+ * Function Name: searchForSpotNearPlatform
+ * Description: Takes user input for a place name and searches for it near any platform.
+ *               Guides the user to the platform if the place is found.
+ * Input Params: None
+ * Return Type: void
+ * */
 void bfs(int startPlatform, int endPlatform, int numPlatforms)
 {
     int *visited = (int *)malloc(sizeof(int) * numPlatforms);
@@ -1124,6 +1366,15 @@ void bfs(int startPlatform, int endPlatform, int numPlatforms)
     free(queue);
 }
 
+/**
+ * Function Name: printBFSPath
+ * Description: Prints the shortest path between two platforms found using Breadth-First Search.
+ * Input Params:
+ *   - parent: Array representing the parent platform for each platform in the shortest path
+ *   - startPlatform: Source platform
+ *   - endPlatform: Destination platform
+ * Return Type: void
+ * */
 void printBFSPath(int *parent, int startPlatform, int endPlatform)
 {
     // Build the path
@@ -1151,6 +1402,14 @@ void printBFSPath(int *parent, int startPlatform, int endPlatform)
 
     free(path);
 }
+
+/**
+ * Function Name: guideToPlatform
+ * Description: Guides the user to a specific platform using Dijkstra's Algorithm or terminates the guide based on user choice.
+ * Input Params:
+ *   - guideToPlatform: The target platform to guide the user to
+ * Return Type: void
+ * */
 void guideToPlatform(int guideToPlatform)
 {
     char userChoice;
@@ -1185,6 +1444,12 @@ void guideToPlatform(int guideToPlatform)
     }
 }
 
+/**
+ * Function Name: touristSpotNearPlatform
+ * Description: Displays tourist spots near platforms, allows the user to search for a specific spot, and guides to the chosen spot if desired.
+ * Input Params: NULL
+ * Return Type: void
+ * */
 void touristSpotNearPlatform(void)
 {
     status = loadSpotsNearPlatformFile();
@@ -1203,6 +1468,15 @@ void touristSpotNearPlatform(void)
     glbCntforPlacesList = 0;
     return;
 }
+
+/**
+ * Function Name: insertIntoBST
+ * Description: Inserts a new node into a Binary Search Tree (BST) based on dormitory ratings.
+ * Input Params:
+ *   - root: Root of the Binary Search Tree
+ *   - nodeToInsert: Node to be inserted into the BST
+ * Return Type: DDT* (Updated root of the BST)
+ * */
 DDT *insertIntoBST(DDT *root, NODE nodeToInsert)
 {
     if (root == NULL)
@@ -1281,6 +1555,10 @@ DDT *insertIntoBST(DDT *root, NODE nodeToInsert)
     return root;
 }
 
+// Function:     openLog
+// Description:  opens the log file to write the success or failure status
+// Input param:  NULL
+// Return Type:  NULL
 int loadDormitoryDataIntoTree(void)
 {
     FILE *fdorm;
@@ -1328,6 +1606,13 @@ int loadDormitoryDataIntoTree(void)
     fclose(fdorm);
     return SUCCESS;
 }
+
+/**
+ * Function Name: loadDormitoryDataIntoTree
+ * Description: Loads dormitory data from a file into a Binary Search Tree (BST).
+ * Input Params: None
+ * Return Type: int (SUCCESS or FAILURE)
+ * */
 void lookForDormitories(void)
 {
     status = loadDormitoryDataIntoTree();
@@ -1339,6 +1624,13 @@ void lookForDormitories(void)
 
     return;
 }
+
+/**
+ * Function Name: getPlatformAssistance
+ * Description: Provides assistance related to platform services to the user.
+ * Input Params: None
+ * Return Type: void
+ * */
 void getPlatformAssistance(void)
 {
     choice = 0;

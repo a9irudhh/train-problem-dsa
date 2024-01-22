@@ -12,7 +12,7 @@
 #define COUNT_EXCEED_ERROR 1004
 #define RESULT_NOT_FOUND 1005
 #define FILE_EMPTY_ERROR 1006
-#define MASTER_KEY 917382465
+#define MASTER_KEY 917382465 // later in the code use this to get all the details of Users which they have entered
 /*Write for user exit also*/
 
 #endif // SETTINGS_H_INCLUDED

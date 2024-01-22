@@ -27,4 +27,13 @@ int tindex = 0;
 // The variable count is used to hold the counters
 int count = 0;
 
+// necessary global count
+// used in maintaining overall data count
+int glbCntForTopCities = 0;
+int glbCntForHashedPasswords = 0;
+int glbCntforPlacesList = 0;
+int maxHashedPsswords = 0;
+int historyCount = 0;
+int duplicateDataCount = 0;
+int feedBackCount = 0;
 #endif // LOCALS_H_INCLUDED
