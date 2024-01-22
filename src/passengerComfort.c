@@ -1203,7 +1203,7 @@ void touristSpotNearPlatform(void)
     glbCntforPlacesList = 0;
     return;
 }
-DDT *insertIntoBST(DDT *root, NODE *nodeToInsert)
+DDT *insertIntoBST(DDT *root, NODE nodeToInsert)
 {
     if (root == NULL)
     {
@@ -1216,7 +1216,21 @@ DDT *insertIntoBST(DDT *root, NODE *nodeToInsert)
         }
 
         // Allocate memory for the data and copy it
-        memcpy(&(root->data), nodeToInsert, sizeof(NODE));
+        root->data = (NODE *)malloc(sizeof(NODE));
+        if (root->data == NULL)
+        {
+            printf("Memory allocation failed\n");
+            free(root);  // Free previously allocated memory
+            return NULL; // Return NULL to indicate failure
+        }
+
+        strcpy(root->data->description, nodeToInsert.description);
+        root->data->dormitoryAvailability = nodeToInsert.dormitoryAvailability;
+        root->data->dormitoryBedCount = nodeToInsert.dormitoryBedCount;
+        strcpy(root->data->dormitoryName, nodeToInsert.dormitoryName);
+        root->data->dormitoryRating = nodeToInsert.dormitoryRating;
+        root->data->dormitoryRent = nodeToInsert.dormitoryRent;
+
         root->left = NULL;
         root->right = NULL;
         return root;
@@ -1226,7 +1240,7 @@ DDT *insertIntoBST(DDT *root, NODE *nodeToInsert)
     while (curr != NULL)
     {
         parent = curr;
-        if (nodeToInsert->dormitoryRating < curr->data->dormitoryRating)
+        if (nodeToInsert.dormitoryRating < curr->data->dormitoryRating)
             curr = curr->left;
         else
             curr = curr->right;
@@ -1241,10 +1255,25 @@ DDT *insertIntoBST(DDT *root, NODE *nodeToInsert)
     }
 
     // Allocate memory for the data and copy it
-    memcpy(&(newNode->data), nodeToInsert, sizeof(NODE));
-    newNode->left = newNode->right = NULL;
+    newNode->data = (NODE *)malloc(sizeof(NODE));
+    if (newNode->data == NULL)
+    {
+        printf("Memory allocation failed\n");
+        free(newNode); // Free previously allocated memory
+        return root;   // Return the original root to maintain the tree structure
+    }
 
-    if (nodeToInsert->dormitoryRating < parent->data->dormitoryRating)
+    strcpy(newNode->data->description, nodeToInsert.description);
+    newNode->data->dormitoryAvailability = nodeToInsert.dormitoryAvailability;
+    newNode->data->dormitoryBedCount = nodeToInsert.dormitoryBedCount;
+    strcpy(newNode->data->dormitoryName, nodeToInsert.dormitoryName);
+    newNode->data->dormitoryRating = nodeToInsert.dormitoryRating;
+    newNode->data->dormitoryRent = nodeToInsert.dormitoryRent;
+
+    newNode->left = NULL;
+    newNode->right = NULL;
+
+    if (nodeToInsert.dormitoryRating < parent->data->dormitoryRating)
         parent->left = newNode;
     else
         parent->right = newNode;
@@ -1265,10 +1294,9 @@ int loadDormitoryDataIntoTree(void)
         writeLog("loadFileCityPromotions", "FILE_OPEN_ERROR", "Unable to open the city promotion file");
         return FAILURE;
     }
-
+    NODE data;
     while (!feof(fdorm))
     {
-        NODE data;
 
         fscanf(fdorm, "%49s\t%d\t%lf\t%d\t%lf\t%199[^\n]s\n",
                data.dormitoryName,
@@ -1278,8 +1306,7 @@ int loadDormitoryDataIntoTree(void)
                &data.dormitoryRating,
                data.description);
 
-        root = insertIntoBST(root, &data);
-
+        root = insertIntoBST(root, data);
     }
 
     // Traverse to the leftmost node

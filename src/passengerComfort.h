@@ -106,7 +106,7 @@ void bfs(int, int, int);
 void printBFSPath(int *, int, int);
 void lookForDormitories(void);
 int loadDormitoryDataIntoTree();
-DDT *insertIntoBST(DDT *, NODE *);
+DDT *insertIntoBST(DDT *, NODE);
 void inorder(DDT *);
 // void noteTaking(void);
 #endif // PASSENGERCOMFORT_H_INCLUDED
