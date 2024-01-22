@@ -10,6 +10,7 @@ CPS duplicateDataDisplay[100];
 CPS searchHistory[100];
 HPS hashedPasswordsCopy[100];
 SNS placesList[100];
+DDT *root = NULL;
 // necessary global count
 // used in maintaining overall data count
 int globalCount = 0;
@@ -786,7 +787,7 @@ void menuForPlatformAssistance(void)
     printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
     printf("-- Enter 1 to Guide you for Inter-Platform Commutation\n");
     printf("-- Enter 2 to Guide you to the Platform which is Nearer to a Tourist Spot\n");
-    printf("-- Enter 3 to               \n\n");
+    printf("-- Enter 3 to Search For Dormitories\n\n");
     printf("Enter 0 to go back \n  =>");
 }
 
@@ -1202,17 +1203,114 @@ void touristSpotNearPlatform(void)
     glbCntforPlacesList = 0;
     return;
 }
+DDT *insertIntoBST(DDT *root, NODE *nodeToInsert)
+{
+    if (root == NULL)
+    {
+        // Allocate memory for a new DDT node
+        root = (DDT *)malloc(sizeof(DDT));
+        if (root == NULL)
+        {
+            printf("Memory allocation failed\n");
+            return NULL; // Return NULL to indicate failure
+        }
 
+        // Allocate memory for the data and copy it
+        memcpy(&(root->data), nodeToInsert, sizeof(NODE));
+        root->left = NULL;
+        root->right = NULL;
+        return root;
+    }
+
+    DDT *curr = root, *parent = NULL;
+    while (curr != NULL)
+    {
+        parent = curr;
+        if (nodeToInsert->dormitoryRating < curr->data->dormitoryRating)
+            curr = curr->left;
+        else
+            curr = curr->right;
+    }
+
+    // Allocate memory for a new DDT node
+    DDT *newNode = (DDT *)malloc(sizeof(DDT));
+    if (newNode == NULL)
+    {
+        printf("Memory allocation failed\n");
+        return root; // Return the original root to maintain the tree structure
+    }
+
+    // Allocate memory for the data and copy it
+    memcpy(&(newNode->data), nodeToInsert, sizeof(NODE));
+    newNode->left = newNode->right = NULL;
+
+    if (nodeToInsert->dormitoryRating < parent->data->dormitoryRating)
+        parent->left = newNode;
+    else
+        parent->right = newNode;
+
+    return root;
+}
+
+int loadDormitoryDataIntoTree(void)
+{
+    FILE *fdorm;
+
+    // Open the file in read mode
+    fdorm = fopen("textDormitoriesDataBase.txt", "r");
+
+    // Check if the file was successfully opened
+    if (fdorm == NULL)
+    {
+        writeLog("loadFileCityPromotions", "FILE_OPEN_ERROR", "Unable to open the city promotion file");
+        return FAILURE;
+    }
+
+    while (!feof(fdorm))
+    {
+        NODE data;
+
+        fscanf(fdorm, "%49s\t%d\t%lf\t%d\t%lf\t%199[^\n]s\n",
+               data.dormitoryName,
+               &data.dormitoryBedCount,
+               &data.dormitoryRent,
+               &data.dormitoryAvailability,
+               &data.dormitoryRating,
+               data.description);
+
+        root = insertIntoBST(root, &data);
+
+    }
+
+    // Traverse to the leftmost node
+    DDT *cur = root;
+    while (cur->left != NULL)
+    {
+        cur = cur->left;
+    }
+
+    // Print the data of the leftmost node
+    printf("%s\t%d\t%lf\t%d\t%lf\t%s\n",
+           cur->data->dormitoryName,
+           cur->data->dormitoryBedCount,
+           cur->data->dormitoryRent,
+           cur->data->dormitoryAvailability,
+           cur->data->dormitoryRating,
+           cur->data->description);
+
+    fclose(fdorm);
+    return SUCCESS;
+}
 void lookForDormitories(void)
 {
-
-    DDT *root = NULL;
-    loadDormitoryDataIntoTree();
+    status = loadDormitoryDataIntoTree();
+    if (status != 1)
+        return;
 
     printf("Enter what kind of Dormitory Are you looking for: ");
     scanf(" %29[^\n]s", dormitoryType);
 
-    
+    return;
 }
 void getPlatformAssistance(void)
 {
@@ -1220,7 +1318,7 @@ void getPlatformAssistance(void)
     while (true)
     {
         menuForPlatformAssistance();
-        scanf("%d", &choice);
+        scanf(" %d", &choice);
 
         switch (choice)
         {

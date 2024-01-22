@@ -46,16 +46,17 @@ typedef struct nodeOfTree
     int dormitoryAvailability;
     double dormitoryRating;
     char description[200];
-}NODE;
+} NODE;
 
 typedef struct dormitoryDataTree
 {
-    
-    NODE *treeNode;
+
+    NODE *data;
     struct dormitoryDataTree *left;
     struct dormitoryDataTree *right;
 
 } DDT;
+
 // Function Declarations
 
 void writeLog(char *, char *, char *);
@@ -104,6 +105,8 @@ void guideToPlatform(int);
 void bfs(int, int, int);
 void printBFSPath(int *, int, int);
 void lookForDormitories(void);
-
+int loadDormitoryDataIntoTree();
+DDT *insertIntoBST(DDT *, NODE *);
+void inorder(DDT *);
 // void noteTaking(void);
 #endif // PASSENGERCOMFORT_H_INCLUDED

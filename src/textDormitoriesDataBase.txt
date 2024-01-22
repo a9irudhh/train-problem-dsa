@@ -1,25 +1,25 @@
-Dorm1 100 500.00 10 4.5 Good dormitory with spacious rooms
-Dorm2 80 450.00 15 3.8 Affordable dormitory with decent facilities
-Dorm3 120 600.00 5 4.2 Modern dormitory with great amenities
-Dorm4 90 550.00 8 4.0 Comfortable dormitory in a central location
-Dorm5 110 520.00 12 4.8 High-rated dormitory with excellent services
-Dorm6 95 530.00 7 4.4 Cozy dormitory with a friendly atmosphere
-Dorm7 85 480.00 11 3.9 Budget-friendly dormitory with clean facilities
-Dorm8 105 560.00 9 4.5 Eco-friendly dormitory surrounded by nature
-Dorm9 75 420.00 14 3.7 Quaint dormitory with a vintage charm
-Dorm10 115 580.00 6 4.1 Spacious dormitory with panoramic city views
-Dorm11 88 510.00 13 3.6 Welcoming dormitory with communal study spaces
-Dorm12 92 540.00 8 4.2 Vibrant dormitory with a lively social scene
-Dorm13 78 470.00 10 3.8 Simple and practical dormitory for students
-Dorm14 98 550.00 7 4.3 Artsy dormitory with creative common areas
-Dorm15 102 590.00 5 4.6 Sophisticated dormitory with modern architecture
-Dorm16 82 500.00 12 3.5 Tranquil dormitory with a focus on student well-being
-Dorm17 108 570.00 8 4.7 High-tech dormitory with smart room features
-Dorm18 89 490.00 11 3.9 Affordable dormitory with a diverse community
-Dorm19 93 525.00 9 4.0 Student-friendly dormitory with supportive staff
-Dorm20 97 560.00 6 4.4 Trendy dormitory with stylish interiors
-Dorm21 79 450.00 14 3.6 Family-like dormitory with communal dinners
-Dorm22 103 580.00 7 4.1 Inclusive dormitory promoting cultural exchange
-Dorm23 87 520.00 10 3.7 Relaxed dormitory with a focus on student relaxation
-Dorm24 96 535.00 8 4.2 Wellness-oriented dormitory with fitness facilities
-Dorm25 101 590.00 5 4.5 Innovative dormitory with collaborative spaces
+Dorm1	100	500.00  10	4.5	Good dormitory with spacious rooms
+Dorm2	80	450.00  15	3.8	Affordable dormitory with decent facilities
+Dorm3	120	600.00  5	4.2	Modern dormitory with great amenities
+Dorm4	90	550.00	8	4.0	Comfortable dormitory in a central location
+Dorm5	110	520.00	12	4.8	High-rated dormitory with excellent services
+Dorm6	95	530.00	7	4.4	Cozy dormitory with a friendly atmosphere
+Dorm7	85	480.00	11	3.9	Budget-friendly dormitory with clean facilities
+Dorm8	105	560.00	9	4.5	Eco-friendly dormitory surrounded by nature
+Dorm9	75	420.00	14	3.7	Quaint dormitory with a vintage charm
+Dorm10	115	580.00	6	4.1	Spacious dormitory with panoramic city views
+Dorm11	88	510.00	13	3.6	Welcoming dormitory with communal study spaces
+Dorm12	92	540.00	8	4.2	Vibrant dormitory with a lively social scene
+Dorm13	78	470.00	10	3.8	Simple and practical dormitory for students
+Dorm14	98	550.00	7	4.3	Artsy dormitory with creative common areas
+Dorm15	102	590.00	5	4.6	Sophisticated dormitory with modern architecture
+Dorm16	82	500.00	12	3.5	Tranquil dormitory with a focus on student well-being
+Dorm17 	108	570.00	8	4.7	High-tech dormitory with smart room features
+Dorm18	89	490.00	11	3.9	Affordable dormitory with a diverse community
+Dorm19	93	525.00	9	4.0	Student-friendly dormitory with supportive staff
+Dorm20	97	560.00	6	4.4	Trendy dormitory with stylish interiors
+Dorm21	79	450.00	14	3.6	Family-like dormitory with communal dinners
+Dorm22	103	580.00	7	4.1	Inclusive dormitory promoting cultural exchange
+Dorm23	87	520.00	10	3.7	Relaxed dormitory with a focus on student relaxation
+Dorm24	96	535.00	8	4.2	Wellness-oriented dormitory with fitness facilities
+Dorm25	101	590.00	5	4.5	Innovative dormitory with collaborative spaces

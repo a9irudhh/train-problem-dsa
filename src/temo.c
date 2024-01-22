@@ -1,158 +1,164 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 
-
-struct tree
+struct student
 {
-    int data;
-    struct tree *left;
-    struct tree *right;
+    int rno;
+    char name[20];
 };
-typedef struct tree TREE;
 
 
-TREE * insert_into_bst(TREE *root, int data)
+struct node
 {
-    TREE * newnode;
-    newnode = (TREE *) malloc (sizeof(TREE));
-    if(newnode == NULL)
-    {
-        printf("Memory allocation failed\n");
-        return root;
-    }
-
-    newnode->data = data;
-    newnode->left = newnode->right = NULL;
-
-    if(root == NULL)
-    {
-        printf("Root is created\n");
-
-        /*root = newnode;
-        return root;
-        */
-        return newnode;
-    }
-
-    TREE *curr, *parent;
-    curr = root;
-    parent = NULL;
-
-    while(curr != NULL)
-    {
-        parent = curr;
-        if(newnode->data < curr->data)
-            curr = curr->left;
-        else
-            curr = curr->right;
-
-    }
-
-    if(newnode->data < parent->data)
-        parent->left = newnode;
-    else
-        parent->right = newnode;
-
-    return root;
-}
-
-void inorder(TREE * root)
-{
-    if(root!=NULL)
-    {
-        inorder(root->left);
-        printf("%d\t",root->data);
-        inorder(root->right);
-    }
-}
-
-void preorder(TREE * root)
-{
-    if(root!=NULL)
-    {
-        printf("%d\t",root->data);
-        preorder(root->left);
-        preorder(root->right);
-    }
-}
+    struct student data;
+    struct node *next;
+};
 
 
-void postorder(TREE * root)
-{
-    if(root!=NULL)
-    {
-        postorder(root->left);
-        postorder(root->right);
-        printf("%d\t",root->data);
-    }
-}
-
-
-TREE * delete_from_bst(TREE * root, int data)
-{
-    if(root == NULL)
-    {
-        printf("Empty Tree\n");
-        return NULL:
-    }
-
-    TREE *curr, *parent, *p, *succ;
-
-    curr = root;
-    parent = NULL;
-    while(curr!=NULL && curr->data!=data)
-    {
-        parent = curr;
-        if(data < curr->data)
-            curr = curr->left;
-        else
-            curr = curr->right;
-    }
-
-    if(curr==NULL)
-    {
-        printf("Data not found to delete\n");
-        return root;
-    }
-
-    if(curr->left == NULL)
-        p = curr->right;
-    else if(curr->right == NULL)
-        p = curr->left;
-    else
-    {
-        succ = curr->right;
-        while(succ->left)
-            succ = succ->left;
-
-        succ->left = curr->left;
-        p = curr->right;
-    }
-
-
-    //deleting the root
-    if(parent == NULL)
-    {
-        free(curr);
-        return p;
-    }
-
-
-    if(curr == parent->left)
-        parent->left = p;
-    else
-        parent->right = p;
-
-    free(curr);
-    return root;
-}
+void readStudentDetails(struct student *);
+void addAtBeg(struct node **, struct student);
+struct student deleteAtBeg(struct node **);
 
 
 int main()
 {
-    TREE *root = NULL;
+    struct node *head = NULL;
+    int ch, f, op, i;
+    struct student e;
+    char name[20];
 
 
+    while(1)
+    {
+        printf("1.Add node at beginning\n");
+        printf("2.Delete node at beginning\n");
+        printf("3.Search Student by name\n");
+        printf("4.Display Student List\n");
+        printf("5.Exit\n");
 
-    return 0;
+        printf("Enter Choice: ");
+        scanf("%d",&ch);
+
+        switch(ch)
+        {
+            case 1: readStudentDetails(&e);
+                    addAtBeg(&head, e);
+                    break;
+
+            case 2: printf("Deleted data:\n");
+                    e = deleteAtBeg(&head);
+                    printf("Roll NO: %d\t",e.rno);
+                    printf("Name: %s\n\n",e.name);
+                    break;
+
+            case 3: printf("Enter name: ");
+                    scanf("%s",name);
+                    i = searchName(head, name);
+                    printf("%d\n\n",i);
+                    break;
+
+            case 4: printf("ROLL NO\tNAME\n");
+                    displayList(head);
+                    break;
+
+
+            case 5: exit(0);
+                break;
+
+        }
+    }
 }
+
+
+
+void displayList(struct node *head)
+{
+    struct node *p = head;
+
+    while(p)
+    {
+        printf("rno: %d\t",p->data.rno);
+        printf("name: %s\n",p->data.name);
+        p = p->next;
+    }
+    /*while(p)
+    {
+        displayStudentDetails(p->data);
+        p = p->next;
+    }*/
+
+}
+
+
+
+
+
+void displayStudentDetails(struct student *s)
+{
+    printf("%d\t%s\n",s->rno,s->name);
+}
+
+
+
+
+int searchName(struct node *head, char name[])
+{
+        struct node *p = head;
+
+        while(p)
+        {
+            if (!(strcasecmp((p->data).name, name)))
+                return 1;
+
+            p = p->next;
+
+        }
+        return 0;
+}
+
+
+struct student deleteAtBeg(struct node **head)
+{
+    struct node *p = *head;
+    struct student e;
+
+    e = p->data;
+    *head = (*head)->next;
+    free(p);
+    return e;
+
+}
+
+
+void addAtBeg(struct node **head, struct student e)
+{
+    struct node *p;
+    p = (struct node *)malloc (sizeof(struct node));
+
+    if(p==NULL)
+    {
+        perror("No memoery available");
+        return;
+    }
+
+    p->data = e;
+    p->next = *head;
+    *head = p;
+}
+
+    DDT *cur = root;
+    while (cur->left != NULL)
+    {
+        cur = cur->left;
+    }
+
+    printf("%s\t%d\t%lf\t%d\t%lf\t%s\n",
+           cur->data->dormitoryName,
+           cur->data->dormitoryBedCount,
+           cur->data->dormitoryRent,
+           cur->data->dormitoryAvailability,
+           cur->data->dormitoryRating,
+           cur->data->description);
+
+    // Free allocated memory
