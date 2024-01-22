@@ -38,6 +38,24 @@ typedef struct spotsNearPlatformStruct
     char places[200];
 } SNS;
 
+typedef struct nodeOfTree
+{
+    char dormitoryName[50];
+    int dormitoryBedCount;
+    double dormitoryRent;
+    int dormitoryAvailability;
+    double dormitoryRating;
+    char description[200];
+}NODE;
+
+typedef struct dormitoryDataTree
+{
+    
+    NODE *treeNode;
+    struct dormitoryDataTree *left;
+    struct dormitoryDataTree *right;
+
+} DDT;
 // Function Declarations
 
 void writeLog(char *, char *, char *);

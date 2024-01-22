@@ -1205,10 +1205,14 @@ void touristSpotNearPlatform(void)
 
 void lookForDormitories(void)
 {
+
+    DDT *root = NULL;
+    loadDormitoryDataIntoTree();
+
     printf("Enter what kind of Dormitory Are you looking for: ");
     scanf(" %29[^\n]s", dormitoryType);
 
-
+    
 }
 void getPlatformAssistance(void)
 {
