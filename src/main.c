@@ -28,7 +28,7 @@ int main()
             break;
 
         case 3:
-        //     noteTaking();
+            // noteTaking();
             break;
         default:
             printf("Please Enter a Valid Choice\n\n");

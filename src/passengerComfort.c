@@ -21,19 +21,33 @@ int duplicateDataCount = 0;
 int feedBackCount = 0;
 char userName[20];
 char password[7];
-
+char cityName[30];
+char dormitoryType[30];
 // weight matrix to show the distance between any 2 platforms
 int weightMatrix[10][10] = {
-    {0, 2, 999999, 999999, 999999, 999999, 5, 999999, 999999, 999999},
-    {2, 0, 3, 999999, 2, 999999, 999999, 10, 999999, 999999},
-    {999999, 3, 0, 5, 999999, 999999, 8, 999999, 999999, 2},
-    {999999, 999999, 5, 0, 3, 999999, 999999, 999999, 999999, 999999},
-    {999999, 2, 999999, 3, 0, 5, 999999, 7, 999999, 999999},
-    {999999, 999999, 999999, 999999, 5, 0, 999999, 999999, 4, 2},
-    {5, 999999, 8, 999999, 999999, 999999, 0, 3, 999999, 999999},
-    {999999, 10, 999999, 999999, 7, 999999, 3, 0, 6, 999999},
-    {999999, 999999, 999999, 999999, 999999, 4, 999999, 6, 0, 2},
-    {999999, 999999, 2, 999999, 999999, 2, 999999, 999999, 2, 0}};
+    {0, 200, 999999, 999999, 999999, 999999, 500, 999999, 999999, 999999},
+    {200, 0, 300, 999999, 200, 999999, 999999, 1000, 999999, 999999},
+    {999999, 300, 0, 500, 999999, 999999, 800, 999999, 999999, 200},
+    {999999, 999999, 500, 0, 300, 999999, 999999, 999999, 999999, 999999},
+    {999999, 200, 999999, 300, 0, 500, 999999, 700, 999999, 999999},
+    {999999, 999999, 999999, 999999, 500, 0, 999999, 999999, 400, 200},
+    {500, 999999, 800, 999999, 999999, 999999, 0, 300, 999999, 999999},
+    {999999, 1000, 999999, 999999, 700, 999999, 300, 0, 600, 999999},
+    {999999, 999999, 999999, 999999, 999999, 400, 999999, 600, 0, 200},
+    {999999, 999999, 200, 999999, 999999, 200, 999999, 999999, 200, 0}};
+
+// adjacency Matrix to show the connection between two platforms
+int adjacencyMatrix[10][10] = {
+    {0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
+    {1, 0, 1, 0, 1, 0, 0, 1, 0, 0},
+    {0, 1, 0, 1, 0, 0, 1, 0, 0, 1},
+    {0, 0, 1, 0, 1, 0, 0, 0, 0, 0},
+    {0, 1, 0, 1, 0, 1, 0, 1, 0, 0},
+    {0, 0, 0, 0, 1, 0, 0, 0, 1, 1},
+    {1, 0, 1, 0, 0, 0, 0, 1, 0, 0},
+    {0, 1, 0, 0, 1, 0, 1, 0, 1, 0},
+    {0, 0, 0, 0, 0, 1, 0, 1, 0, 1},
+    {0, 0, 1, 0, 0, 1, 0, 0, 1, 0}};
 
 // definitions of all the functions which I have used in my code
 
@@ -313,6 +327,7 @@ void viewTopCity(void)
     printf("RATING  REVIEW\n\n");
     printf("%.1lf\t%s\n", dataToDisplay[globalCount - 1].rating, dataToDisplay[globalCount - 1].description);
 
+    globalCount = 0;
     return;
 }
 
@@ -770,7 +785,7 @@ void menuForPlatformAssistance(void)
 {
     printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
     printf("-- Enter 1 to Guide you for Inter-Platform Commutation\n");
-    printf("-- Enter 2 to Guide you for Platform Near to Tourist Spot\n");
+    printf("-- Enter 2 to Guide you to the Platform which is Nearer to a Tourist Spot\n");
     printf("-- Enter 3 to               \n\n");
     printf("Enter 0 to go back \n  =>");
 }
@@ -838,7 +853,7 @@ void dijkstra(int src, int dest, int numPlatforms)
     }
 
     // Print the path in reverse order
-    printf("Shortest distance between Platform %d and Platform %d is: %d\n", src + 1, dest + 1, dist[dest]);
+    printf("Shortest distance between Platform %d and Platform %d is: %d meters\n", src + 1, dest + 1, dist[dest]);
     printf("Path: ");
     for (int i = pathLength - 1; i >= 0; i--)
     {
@@ -943,6 +958,232 @@ void heapSortForSpotsNearPlatform(void)
     }
 }
 
+void computeLPSArray(char *pat, int M, int *lps)
+{
+    // length of the previous longest prefix suffix
+    int len = 0;
+
+    lps[0] = 0; // lps[0] is always 0
+
+    // the loop calculates lps[i] for i = 1 to M-1
+    int i = 1;
+    while (i < M)
+    {
+        if (pat[i] == pat[len])
+        {
+            len++;
+            lps[i] = len;
+            i++;
+        }
+        else // (pat[i] != pat[len])
+        {
+            // This is tricky. Consider the example.
+            // AAACAAAA and i = 7. The idea is similar
+            // to search step.
+            if (len != 0)
+            {
+                len = lps[len - 1];
+
+                // Also, note that we do not increment
+                // i here
+            }
+            else // if (len == 0)
+            {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+}
+int kmpSearch(char *txt, char *pat)
+{
+    int M = strlen(pat);
+    int N = strlen(txt);
+
+    int *lps = (int *)malloc(sizeof(int) * M);
+
+    computeLPSArray(pat, M, lps);
+
+    int i = 0;
+    int j = 0;
+    while ((N - i) >= (M - j))
+    {
+        if (pat[j] == txt[i])
+        {
+            j++;
+            i++;
+        }
+
+        if (j == M)
+        {
+            free(lps);
+            return SUCCESS;
+        }
+
+        // mismatch after j matches
+        else if (i < N && pat[j] != txt[i])
+        {
+            // Do not match lps[0..lps[j-1]] characters,
+            // they will match anyway
+            if (j != 0)
+                j = lps[j - 1];
+            else
+                i = i + 1;
+        }
+    }
+    free(lps);
+    return FAILURE;
+}
+
+int knuthMorisPrattToSearchForPlace(char *enteredName)
+{
+    for (int i = 0; i < glbCntforPlacesList; i++)
+    {
+        // Get the place name from the current struct in placesList
+        char *placeNames = placesList[i].places;
+        int searchedPlatform = placesList[i].platform;
+
+        // Compare the place name with the target string
+        if (kmpSearch(placeNames, enteredName) == 1)
+        {
+            printf("%s is near Platform-%d.\n", enteredName, searchedPlatform);
+            return searchedPlatform;
+        }
+    }
+
+    // No match found
+    printf("No City with %s near any of the platforms.\n", enteredName);
+    return FAILURE;
+}
+
+void searchForSpotNearPlatform(void)
+{
+    printf("Enter the Place Name: ");
+    scanf(" %29[^\n]s", cityName);
+
+    getchar();
+    status = knuthMorisPrattToSearchForPlace(cityName);
+    if (status == -1)
+    {
+        return;
+    }
+
+    guideToPlatform(status);
+}
+
+void bfs(int startPlatform, int endPlatform, int numPlatforms)
+{
+    int *visited = (int *)malloc(sizeof(int) * numPlatforms);
+    int *parent = (int *)malloc(sizeof(int) * numPlatforms);
+
+    for (int i = 0; i < numPlatforms; i++)
+    {
+        visited[i] = 0;
+        parent[i] = -1; // Initialize parent array to -1
+    }
+
+    // Create a queue for BFS
+    int *queue = (int *)malloc(sizeof(int) * numPlatforms);
+    int front = -1, rear = -1;
+
+    visited[startPlatform] = 1;
+    queue[++rear] = startPlatform;
+
+    while (front != rear)
+    {
+        int currentPlatform = queue[++front];
+
+        for (int neighbor = 0; neighbor < numPlatforms; neighbor++)
+        {
+            if (!visited[neighbor] && weightMatrix[currentPlatform][neighbor] != 999999)
+            {
+                visited[neighbor] = 1;
+                parent[neighbor] = currentPlatform;
+                queue[++rear] = neighbor;
+
+                if (neighbor == endPlatform)
+                {
+                    // Path found, print the path and return
+                    printBFSPath(parent, startPlatform, endPlatform);
+                    free(visited);
+                    free(parent);
+                    free(queue);
+                    return;
+                }
+            }
+        }
+    }
+
+    // If BFS completes without finding the destination
+    printf("No path found between Platform %d and Platform %d.\n", startPlatform, endPlatform);
+
+    // Free allocated memory
+    free(visited);
+    free(parent);
+    free(queue);
+}
+
+void printBFSPath(int *parent, int startPlatform, int endPlatform)
+{
+    // Build the path
+    int numPlatforms = 10;
+    int currentPlatform = endPlatform;
+    int *path = (int *)malloc(sizeof(int) * (numPlatforms));
+    int pathLength = 0;
+
+    while (currentPlatform != -1)
+    {
+        path[pathLength++] = currentPlatform; // Adjust to 1-indexed form
+        currentPlatform = parent[currentPlatform];
+    }
+
+    // Print the path in reverse order
+    printf("Shortest path between Platform %d and Platform %d: ", startPlatform, endPlatform);
+    for (int i = pathLength - 1; i >= 0; i--)
+    {
+        printf("%d", path[i]);
+        if (i > 0)
+            printf(" -> ");
+    }
+
+    printf("\n");
+
+    free(path);
+}
+void guideToPlatform(int guideToPlatform)
+{
+    char userChoice;
+    int startPlatform;
+    while (true)
+    {
+    wrongInput:
+        printf("Do You want Us to Guide you to Platform-%d? [Y/N]\n =>", guideToPlatform);
+        scanf(" %c", &userChoice);
+
+        getchar();
+        userChoice = toupper(userChoice);
+        if (userChoice == 'Y')
+        {
+            printf("In Which Platform Are you right Now?\n");
+            scanf("%d", &startPlatform);
+            // bfs(startPlatform, guideToPlatform, 10);
+
+            dijkstra(startPlatform - 1, guideToPlatform - 1, 10);
+            return;
+        }
+        else if (userChoice == 'N')
+        {
+            system("cls");
+            return;
+        }
+        else
+        {
+            printf("Please choose [Y/N]\n");
+            goto wrongInput;
+        }
+    }
+}
+
 void touristSpotNearPlatform(void)
 {
     status = loadSpotsNearPlatformFile();
@@ -953,10 +1194,22 @@ void touristSpotNearPlatform(void)
     }
 
     heapSortForSpotsNearPlatform();
-    for (int i = 0; i < glbCntforPlacesList; i++)
+    for (int i = 1; i < glbCntforPlacesList; i++)
         printf("%d\t%s\n", placesList[i].platform, placesList[i].places);
+
+    searchForSpotNearPlatform();
+
+    glbCntforPlacesList = 0;
+    return;
 }
 
+void lookForDormitories(void)
+{
+    printf("Enter what kind of Dormitory Are you looking for: ");
+    scanf(" %29[^\n]s", dormitoryType);
+
+
+}
 void getPlatformAssistance(void)
 {
     choice = 0;
@@ -980,7 +1233,8 @@ void getPlatformAssistance(void)
             break;
 
         case 3:
-
+            lookForDormitories();
+            break;
         default:
             printf("Please Enter a Valid Choice\n\n");
             break;

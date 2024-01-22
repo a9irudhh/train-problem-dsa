@@ -35,8 +35,9 @@ typedef struct hashedPasswordsStruct
 typedef struct spotsNearPlatformStruct
 {
     int platform;
-    char places[100];
+    char places[200];
 } SNS;
+
 // Function Declarations
 
 void writeLog(char *, char *, char *);
@@ -79,5 +80,12 @@ void dijkstra(int, int, int);
 void touristSpotNearPlatform(void);
 int loadSpotsNearPlatformFile(void);
 void heapSortForSpotsNearPlatform(void);
+void searchForSpotNearPlatform(void);
+int knuthMorisPrattToSearchForPlace(char *);
+void guideToPlatform(int);
+void bfs(int, int, int);
+void printBFSPath(int *, int, int);
+void lookForDormitories(void);
+
 // void noteTaking(void);
 #endif // PASSENGERCOMFORT_H_INCLUDED
