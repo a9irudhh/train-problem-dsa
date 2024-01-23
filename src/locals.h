@@ -6,7 +6,7 @@
 
 // Variable for take choice input from the user
 // Can be used for:
-//  -- switch cases
+//  -- switch cases 
 //  -- menu options
 //  -- Any other scenario where user is prompted for a choice to input
 int choice = 0;
@@ -27,7 +27,7 @@ int tindex = 0;
 // The variable count is used to hold the counters
 int count = 0;
 
-// necessary global count
+// necessary various global counts
 // used in maintaining overall data count
 int glbCntForTopCities = 0;
 int glbCntForHashedPasswords = 0;
@@ -37,4 +37,5 @@ int historyCount = 0;
 int duplicateDataCount = 0;
 int feedBackCount = 0;
 int nodeCount = 0;
+
 #endif // LOCALS_H_INCLUDED

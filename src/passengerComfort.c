@@ -42,7 +42,7 @@ int weightMatrix[10][10] = {
 // Description:  opens the log file to write the success or failure status
 // Input param:  NULL
 // Return Type:  NULL
-void openLog()
+void openLog(void)
 {
     // Open the file
     flog = fopen("log.txt", "a+");
@@ -60,7 +60,7 @@ void openLog()
 // Description:  closes the log file if opened
 // Input param:  NULL
 // Return Type:  NULL
-void closeLog()
+void closeLog(void)
 {
     if (flog != NULL)
     {
@@ -94,12 +94,12 @@ void writeLog(char *functionName, char *status, char *message)
 void welcomeMessage(void)
 {
     system("cls");
-    for (tindex = 0; tindex < 100; tindex++)
+    for (tindex = 0; tindex < 130; tindex++)
         printf("*");
 
-    printf("\n\n\t\t\t      WELCOME TO PASSENGER COMFORT MODULE\n\n");
+    printf("\n\n\t\t\t\t\t      WELCOME TO PASSENGER COMFORT MODULE\n\n");
 
-    for (tindex = 0; tindex < 100; tindex++)
+    for (tindex = 0; tindex < 130; tindex++)
         printf("*");
 
     return;
@@ -112,7 +112,7 @@ void welcomeMessage(void)
 void menuForPassengerComfort(void)
 {
     // Display the menu with different options
-    printf("\n\t\t\t  \033[1;36m------------------MENU------------------\033[0m\n\n");
+    printf("\n\t\t\t\t\t  \033[1;36m------------------MENU------------------\033[0m\n\n");
     printf("=> Enter 1 to View the City's Unique Attractions\n");
     printf("=> Enter 2 to Get Platform Assistance\n");
     printf("=> Enter 3 to For Personalised NoteTaking\n\n");
@@ -248,7 +248,6 @@ void mergeSortForPassword(void)
  *   - int q: Size of array C
  *   - HPS *A: Pointer to the merged array
  * Return Type: NULL*/
-
 void merge(HPS *B, int p, HPS *C, int q, HPS *A)
 {
     int i = 0, j = 0, k = 0;
@@ -397,7 +396,6 @@ void searchForCity(void)
         return;
     }
 
-    // printf("working\n");
     char searchString[25];
     getchar(); // Consume the newline character in the input buffer
 
@@ -408,21 +406,21 @@ void searchForCity(void)
     if (strlen(searchString) == 0)
     {
         // If the search string is empty, display all records
-        for (int i = 0; i < glbCntForTopCities; i++)
+        for (tindex = 0; tindex < glbCntForTopCities; tindex++)
         {
             printf("RATING  REVIEW\n\n");
-            printf("%.1lf\t%s\n", dataToDisplay[i].rating, dataToDisplay[i].description);
+            printf("%.1lf\t%s\n", dataToDisplay[tindex].rating, dataToDisplay[tindex].description);
         }
         return;
     }
 
-    for (int i = 0; i < glbCntForTopCities; i++)
+    for (tindex = 0; tindex < glbCntForTopCities; tindex++)
     {
-        int k = bruteForceStringSearch(dataToDisplay[i].description, searchString);
+        int k = bruteForceStringSearch(dataToDisplay[tindex].description, searchString);
         if (k != -1)
         {
-            duplicateDataDisplay[duplicateDataCount].rating = dataToDisplay[i].rating;
-            strcpy(duplicateDataDisplay[duplicateDataCount].description, dataToDisplay[i].description);
+            duplicateDataDisplay[duplicateDataCount].rating = dataToDisplay[tindex].rating;
+            strcpy(duplicateDataDisplay[duplicateDataCount].description, dataToDisplay[tindex].description);
             duplicateDataCount++;
         }
     }
@@ -432,11 +430,11 @@ void searchForCity(void)
         printf("No Cities with name %s\n", searchString);
         return;
     }
-    for (int i = 0; i < duplicateDataCount; i++)
+    for (tindex = 0; tindex < duplicateDataCount; tindex++)
     {
 
         printf("RATING  REVIEW\n\n");
-        printf("%.1lf\t%s\n", duplicateDataDisplay[i].rating, duplicateDataDisplay[i].description);
+        printf("%.1lf\t%s\n", duplicateDataDisplay[tindex].rating, duplicateDataDisplay[tindex].description);
     }
 
     return;
@@ -541,7 +539,6 @@ int countWords(char *input)
  * */
 unsigned long getHashValueDjb2(char *tempPassword)
 {
-
     unsigned long hash = 5381;
     int c;
 
@@ -581,7 +578,7 @@ moreThan2Words:
         printf("Username already exists.\n");
         goto moreThan2Words;
     }
-    printf("Enter password: ");
+    printf("Enter password(Max 7 characters): ");
     int i = 0;
     int attempts = 7;
     while (attempts > 0)
@@ -621,7 +618,7 @@ int searchInFile(char *target)
     if (file == NULL)
     {
         perror("Error opening file");
-        return -1;
+        return FAILURE;
     }
 
     char line[100];
@@ -684,7 +681,7 @@ int rabinKarpSearch(char *token, char *target)
             tokenHash = recalculateHash(token, i, i + targetSize, tokenHash, targetSize);
     }
 
-    return -1; // Pattern not found
+    return FAILURE; // Pattern not found
 }
 
 /**
@@ -768,7 +765,7 @@ int rabinKarpSearchInitiater(char *userName)
         return FAILURE;
     }
 
-    printf("Enter password: ");
+    printf("Enter password(Max 7 characters): ");
     int i = 0;
     int attempts = 7;
     while (attempts > 0)
@@ -941,16 +938,16 @@ void viewTopNcities(void)
         return;
     }
 
-    printf("Enter the range in which you want to see the List(1-?): ");
+    printf("Enter the range in which you want to see the List (1-?): ");
     int topNcity;
     scanf("%d", &topNcity);
 
     insertionSort(glbCntForTopCities);
 
-    for (int i = 0; i < topNcity; i++)
+    for (tindex = 0; tindex < topNcity; tindex++)
     {
         printf("RATING  REVIEW\n\n");
-        printf("%.1lf\t%s\n", dataToDisplay[i].rating, dataToDisplay[i].description);
+        printf("%.1lf\t%s\n", dataToDisplay[tindex].rating, dataToDisplay[tindex].description);
     }
 
     glbCntForTopCities = 0;
@@ -964,7 +961,7 @@ void viewTopNcities(void)
  * */
 void menuForCityPromotions(void)
 {
-    printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
+    printf("\n\t\t\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
     printf("-- Enter 1 to View City's Top Tourist spot\n");
     printf("-- Enter 2 to View City's Top N Tourist spots\n");
     printf("-- Enter 3 to Search for the Tourist Spot's Description\n");
@@ -988,11 +985,10 @@ void cityPromotions(void)
     {
         menuForCityPromotions();
         scanf("%d", &choice);
-
+        system("cls");
         switch (choice)
         {
         case 0:
-            system("cls");
             return;
 
         case 1:
@@ -1014,8 +1010,6 @@ void cityPromotions(void)
     }
 }
 
-// --------------------------------------------new functionality related
-
 /**
  * Function Name: menuForPlatformAssistance
  * Description: Displays a menu for platform assistance, allowing users to choose various options.
@@ -1024,7 +1018,7 @@ void cityPromotions(void)
  * */
 void menuForPlatformAssistance(void)
 {
-    printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
+    printf("\n\t\t\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
     printf("-- Enter 1 to Guide you for Inter-Platform Commutation\n");
     printf("-- Enter 2 to Guide you to the Platform which is Nearer to a Tourist Spot\n");
     printf("-- Enter 3 to Search For Dormitories\n\n");
@@ -1355,7 +1349,7 @@ int knuthMorrisPrattToSearchForPlace(char *enteredName)
 // Return Type:  NULL
 void searchForSpotNearPlatform(void)
 {
-    printf("Enter the Place Name: ");
+    printf("\nEnter the Place Name: ");
     scanf(" %29[^\n]s", cityName);
 
     getchar();
@@ -1425,8 +1419,8 @@ void touristSpotNearPlatform(void)
     }
 
     heapSortForSpotsNearPlatform();
-    for (int i = 1; i < glbCntforPlacesList; i++)
-        printf("%d\t%s\n", placesList[i].platform, placesList[i].places);
+    for (tindex = 1; tindex < glbCntforPlacesList; tindex++)
+        printf("%s\n", placesList[tindex].places);
 
     searchForSpotNearPlatform();
 
@@ -1523,10 +1517,12 @@ DDT *insertIntoBST(DDT *root, NODE nodeToInsert)
     return root;
 }
 
-// Function:     openLog
-// Description:  opens the log file to write the success or failure status
+// Function:     loadDormitoryDataIntoTree
+// Description:  Reads data from the file "textDormitoriesDataBase.txt" and loads it into a binary search tree.
 // Input param:  NULL
-// Return Type:  NULL
+// Return Type:  int
+//               - Returns SUCCESS (0) if the operation is successful.
+//               - Returns FAILURE (1) if there is an error, such as being unable to open the file.
 int loadDormitoryDataIntoTree(void)
 {
     FILE *fdorm;
@@ -1560,17 +1556,23 @@ int loadDormitoryDataIntoTree(void)
     return SUCCESS;
 }
 
-void printDormitoryInfo(NODE* nodeInfoToPrint)
+// Function:     printDormitoryInfo
+// Description:  Prints information about a dormitory node to the console.
+// Input param:  nodeInfoToPrint - Pointer to the dormitory node whose information is to be printed.
+// Return Type:  void
+void printDormitoryInfo(NODE *nodeInfoToPrint)
 {
-    printf("%d\t%49s\t%d\t%lf\t%d\t%lf\t%s\n",
-               nodeInfoToPrint->index,
-            nodeInfoToPrint->dormitoryName,
-               nodeInfoToPrint->dormitoryBedCount,
-               nodeInfoToPrint->dormitoryRent,
-               nodeInfoToPrint->dormitoryAvailability,
-               nodeInfoToPrint->dormitoryRating,
-            nodeInfoToPrint->description);
+    printf("Index\tName\tBed Count\tRent\tAvailability\tRating\t\tDescription\n");
+    printf("%d\t%s\t%d\t\t%lf\t%d\t%lf\t%s\n",
+           nodeInfoToPrint->index,
+           nodeInfoToPrint->dormitoryName,
+           nodeInfoToPrint->dormitoryBedCount,
+           nodeInfoToPrint->dormitoryRent,
+           nodeInfoToPrint->dormitoryAvailability,
+           nodeInfoToPrint->dormitoryRating,
+           nodeInfoToPrint->description);
 }
+
 /**
  *Function Name: bfsForDormitoryType
  *Description: Performs BFS on a tree to find a dormitory with a specific type.
@@ -1592,6 +1594,8 @@ DDT *bfsForDormitoryType(DDT *startNode, char *dormitoryType, int numberOfNodes)
 
     queue[++rear] = startNode;
 
+    DDT *foundNode = NULL;
+
     while (front <= rear)
     {
         DDT *currentNode = queue[++front];
@@ -1602,9 +1606,8 @@ DDT *bfsForDormitoryType(DDT *startNode, char *dormitoryType, int numberOfNodes)
             if (kmpSearch(currentNode->data->description, dormitoryType) == 1)
             {
                 // Dormitory with the specified type found
-                free(visited);
-                free(queue);
-                return currentNode; // Return the found node
+                foundNode = currentNode;
+                break;
             }
 
             // Enqueue left and right children if not visited
@@ -1622,10 +1625,14 @@ DDT *bfsForDormitoryType(DDT *startNode, char *dormitoryType, int numberOfNodes)
         }
     }
 
+    if (foundNode == NULL)
+        return NULL;
     // Free allocated memory
     free(visited);
     free(queue);
-    return NULL; // Return NULL if the dormitory type is not found
+
+    // Dormitory type not found, return NULL
+    return foundNode;
 }
 
 /**
@@ -1643,8 +1650,8 @@ void lookForDormitories(void)
     printf("Enter what kind of Dormitory Are you looking for: ");
     scanf(" %29[^\n]s", dormitoryType);
 
-    DDT* foundNode = bfsForDormitoryType(root, dormitoryType, nodeCount);
-    if(foundNode == NULL)
+    DDT *foundNode = bfsForDormitoryType(root, dormitoryType, nodeCount);
+    if (foundNode == NULL)
     {
         printf("No Dormitory with %s type found.\n", dormitoryType);
         return;
@@ -1653,7 +1660,6 @@ void lookForDormitories(void)
     printDormitoryInfo(foundNode->data);
     return;
 }
-
 /**
  * Function Name: getPlatformAssistance
  * Description: Provides assistance related to platform services to the user.
@@ -1667,12 +1673,11 @@ void getPlatformAssistance(void)
     {
         menuForPlatformAssistance();
         scanf(" %d", &choice);
-
+        system("cls");
         switch (choice)
         {
         case 0:
             root = NULL;
-            system("cls");
             return;
 
         case 1:
@@ -1801,7 +1806,6 @@ void viewTheListInNotes(void)
     while (fgets(currentLine, sizeof(currentLine), file) != NULL)
     {
         sscanf(currentLine, "%19s\t%149[^\n]s", currentUsername, currentString);
-        printf("working\n");
         if (kmpSearch(currentUsername, getString) == 1)
         {
             flag = 1;
@@ -1824,7 +1828,7 @@ void viewTheListInNotes(void)
  */
 void menuForNoteTaking(void)
 {
-    printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
+    printf("\n\t\t\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
     printf("-- Enter 1 to Add Notes(Check List)\n");
     printf("-- Enter 2 to To View the Note at top\n");
     printf("Enter 0 to go back \n  =>");
@@ -1843,11 +1847,11 @@ void noteTaking(void)
     {
         menuForNoteTaking();
         scanf(" %d", &choice);
+        system("cls");
 
         switch (choice)
         {
         case 0:
-            system("cls");
             return;
 
         case 1:

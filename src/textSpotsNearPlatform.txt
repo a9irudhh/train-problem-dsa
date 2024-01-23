@@ -7,4 +7,4 @@
 7   EsselWorld, Nehru Science Centre, Film City Goregaon, Prithvi Theatre, Fashion Street
 10  Jogeshwari Caves, Hanging Gardens, Sewri Fort, Sassoon Dock, Mumba Devi Temple
 4   St. Xavier's College, Bombay Natural History Society, Film Heritage Foundation, Kamala Nehru Park, Mumba Devi Temple
-8   Colaba Causeway, Chota Kashmir, Taraporewala Aquarium, Fashion Street, Chor Bazaar
+8   Colaba Causeway, Chota Kashmir, Taraporewala Aquarium, Fashion Street, Chor Bazaar.

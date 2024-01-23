@@ -67,22 +67,22 @@ typedef struct dormitoryDataTree
 // Function Declarations
 
 // Function to write log entries
-void writeLog(char *, char *, char *);
+void writeLog(char *, char *, char *); //done
 
 // Function to open the log file
-void openLog();
+void openLog(void);//done
 
 // Function to close the log file
-void closeLog();
+void closeLog(void);//done
 
 // Function to display welcome message
-void welcomeMessage(void);
+void welcomeMessage(void);//done
 
 // Function to display the main menu for passenger comfort
-void menuForPassengerComfort(void);
+void menuForPassengerComfort(void);//done
 
 // Function to display the menu for city promotions
-void menuForCityPromotions(void);
+void menuForCityPromotions(void);//done
 
 // Function to handle city promotions
 void cityPromotions(void);
@@ -214,13 +214,13 @@ DDT *insertIntoBST(DDT *, NODE);
 void inorder(DDT *);
 
 // Function for handling note-taking functionality
-void noteTaking(void);
+void noteTaking(void);//done
 
 // Function for viewing the top N cities
 void viewTopNcities(void);
 
 // Function to display the menu for note-taking
-void menuForNoteTaking(void);
+void menuForNoteTaking(void);//done
 
 // Function for initiating adding notes
 void addNotes(void);

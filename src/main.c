@@ -2,7 +2,6 @@
 
 #include "locals.h"
 #include "passengerComfort.c"
-// passengerComfort.c -> c file which contains all the implemented functionalities
 
 // main function to initiate the module
 int main()
