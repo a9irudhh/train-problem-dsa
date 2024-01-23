@@ -1112,10 +1112,12 @@ void dijkstra(int src, int dest, int numPlatforms)
     free(path);
 }
 
-// Function:     openLog
-// Description:  opens the log file to write the success or failure status
-// Input param:  NULL
-// Return Type:  NULL
+/**
+ * Function Name: interPlatformCommute
+ * Description: Guides the user for inter-platform commute using Dijkstra's algorithm.
+ * Input Params: None
+ * Return Type: void
+ **/
 void interPlatformCommute(void)
 {
     int initialPlatform, finalPlatform;
@@ -1646,22 +1648,6 @@ int loadDormitoryDataIntoTree(void)
         root = insertIntoBST(root, data);
     }
 
-    // Traverse to the leftmost node
-    DDT *cur = root;
-    while (cur->left != NULL)
-    {
-        cur = cur->left;
-    }
-
-    // Print the data of the leftmost node
-    printf("%s\t%d\t%lf\t%d\t%lf\t%s\n",
-           cur->data->dormitoryName,
-           cur->data->dormitoryBedCount,
-           cur->data->dormitoryRent,
-           cur->data->dormitoryAvailability,
-           cur->data->dormitoryRating,
-           cur->data->description);
-
     fclose(fdorm);
     return SUCCESS;
 }
@@ -1681,6 +1667,7 @@ void lookForDormitories(void)
     printf("Enter what kind of Dormitory Are you looking for: ");
     scanf(" %29[^\n]s", dormitoryType);
 
+    
     return;
 }
 
@@ -1701,6 +1688,7 @@ void getPlatformAssistance(void)
         switch (choice)
         {
         case 0:
+        root = NULL;
             system("cls");
             return;
 
