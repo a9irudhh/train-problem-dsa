@@ -47,9 +47,9 @@ int main()
 
         case 3:
             // User chose an option that is currently commented out
-            // noteTaking();
+            noteTaking();
             break;
-
+            
         default:
             // User entered an invalid choice
             printf("Please Enter a Valid Choice\n\n");

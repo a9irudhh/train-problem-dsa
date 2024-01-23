@@ -212,7 +212,22 @@ DDT *insertIntoBST(DDT *, NODE);
 // Function to perform inorder traversal of the binary search tree
 void inorder(DDT *);
 
-// Function for note-taking (currently commented out)
-// void noteTaking(void);
+// Function for handling note-taking functionality
+void noteTaking(void);
+
+// Function for viewing the top N cities
+void viewTopNcities(void);
+
+// Function to display the menu for note-taking
+void menuForNoteTaking(void);
+
+// Function for initiating adding notes
+void addNotes(void);
+
+// Function to add notes to a file
+void addNotesToFile(char *);
+
+// Function for viewing the list of notes of a particular user
+void viewTheListInNotes(void);
 
 #endif // PASSENGERCOMFORT_H_INCLUDED

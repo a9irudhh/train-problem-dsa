@@ -115,7 +115,7 @@ void menuForPassengerComfort(void)
     printf("\n\t\t\t  \033[1;36m------------------MENU------------------\033[0m\n\n");
     printf("=> Enter 1 to View the City's Unique Attractions\n");
     printf("=> Enter 2 to Get Platform Assistance\n");
-    printf("=> Enter 3 to        \n\n");
+    printf("=> Enter 3 to For Personalised NoteTaking\n\n");
     printf("Enter 0 to exit the program :( \n  =>");
     return;
 }
@@ -893,10 +893,67 @@ void getFeedbackOnCity(void)
         }
         else
         {
-            printf("Please choose [Y/N]\n");
+            printf("Please choose [Y/N] or 0\n");
             goto wrongInput;
         }
     }
+}
+
+/**
+ * Function Name: viewTopNCities
+ * Description: Loads and displays information about the top-rated city promotion where range is taken from the user.
+ * Input Params: None
+ * Return Type: None
+ * */
+void insertionSort(int number)
+{
+    int i, j;
+    CPS key;
+
+    for (i = 1; i < number; i++)
+    {
+        key = dataToDisplay[i];
+        j = i - 1;
+
+        // Move elements of arr[0..i-1] that are greater than key.rating
+        // to one position ahead of their current position
+        while (j >= 0 && dataToDisplay[j].rating < key.rating)
+        {
+            dataToDisplay[j + 1] = dataToDisplay[j];
+            j = j - 1;
+        }
+        dataToDisplay[j + 1] = key;
+    }
+}
+
+/**
+ * Function Name: viewTopNCities
+ * Description: Loads and displays information about the top-rated city promotion where range is taken from the user.
+ * Input Params: None
+ * Return Type: None
+ * */
+void viewTopNcities(void)
+{
+    status = loadFileCityPromotions();
+    if (status != 1)
+    {
+        printf("Load Failed\n");
+        return;
+    }
+
+    printf("Enter the range in which you want to see the List(1-?): ");
+    int topNcity;
+    scanf("%d", &topNcity);
+
+    insertionSort(glbCntForTopCities);
+
+    for (int i = 0; i < topNcity; i++)
+    {
+        printf("RATING  REVIEW\n\n");
+        printf("%.1lf\t%s\n", dataToDisplay[i].rating, dataToDisplay[i].description);
+    }
+
+    glbCntForTopCities = 0;
 }
 
 /**
@@ -909,8 +966,9 @@ void menuForCityPromotions(void)
 {
     printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
     printf("-- Enter 1 to View City's Top Tourist spot\n");
-    printf("-- Enter 2 to Search for the Tourist Spot's Description\n");
-    printf("-- Enter 3 to Give Feedback on a City\n\n");
+    printf("-- Enter 2 to View City's Top N Tourist spots\n");
+    printf("-- Enter 3 to Search for the Tourist Spot's Description\n");
+    printf("-- Enter 4 to Give Feedback on a City\n\n");
     printf("Enter 0 to go back \n  =>");
     return;
 }
@@ -941,12 +999,13 @@ void cityPromotions(void)
             viewTopCity(); // implemented quicksort
             break;
         case 2:
-            searchForCity(); // implemented Bfss to search
+            viewTopNcities();
             break;
         case 3:
-            getFeedbackOnCity(); // hashing, rabinKarp, constructive algo
+            searchForCity(); // implemented Bfss to search
             break;
         case 4:
+            getFeedbackOnCity(); // hashing, rabinKarp, constructive algo
             break;
         default:
             printf("Please Enter a Valid Choice\n\n");
@@ -1438,7 +1497,7 @@ void guideToPlatform(int guideToPlatform)
         }
         else
         {
-            printf("Please choose [Y/N]\n");
+            printf("Please choose [Y/N] or 0\n");
             goto wrongInput;
         }
     }
@@ -1656,6 +1715,177 @@ void getPlatformAssistance(void)
         case 3:
             lookForDormitories();
             break;
+        default:
+            printf("Please Enter a Valid Choice\n\n");
+            break;
+        }
+    }
+}
+
+// ------------------------------------------
+
+/**
+ * Function Name: addNotesToFile
+ * Description: Adds a note associated with the user's username to a file.
+ * Input Params:   
+ *    - char *userName: The username associated with the note.
+ * Return Type: 
+ *    void
+ */
+void addNotesToFile(char *userName)
+{
+    system("cls");
+    printf("\nEnter the Note That you want to add: ");
+    char userNote[150];
+    scanf("%149[^\n]s", userNote);
+    getchar(); // Consume the newline character from the input buffer
+
+    FILE *fadd = fopen("textUserData.txt", "a");
+
+    if (fadd == NULL)
+    {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    fprintf(fadd, "%s\t%s\n", userName, userNote);
+    printf("\nNote added Successfully.\n");
+    fclose(fadd); // Don't forget to close the file after writing
+    return;
+}
+
+/**
+ * Function Name: addNotes
+ * Description: Allows the user to add notes based on whether they are a new user or an existing user.
+ * Input Params: None
+ * Return Type: void
+ */
+void addNotes(void)
+{
+    system("cls");
+    char userChoice;
+    while (true)
+    {
+    wrongInput:
+        printf("Are you a New User? [Y/N]\nEnter 0 to return\n =>");
+        scanf(" %c", &userChoice);
+
+        getchar();
+        userChoice = toupper(userChoice);
+        if (userChoice == 'Y')
+        {
+            getString = createAccount();
+            if (getString == NULL)
+                return;
+
+            maxHashedPsswords++;
+            addNotesToFile(getString);
+            return;
+        }
+        else if (userChoice == 'N')
+        {
+            getString = getLoginCredentials();
+            if (getString == NULL)
+                return;
+            addNotesToFile(getString);
+            return;
+        }
+        else if (userChoice == '0')
+        {
+            system("cls");
+            return;
+        }
+        else
+        {
+            printf("Please choose [Y/N] or 0\n");
+            goto wrongInput;
+        }
+    }
+}
+
+/**
+ * Function Name: viewTheListInNotes
+ * Description: Displays the list of notes associated with a user after successful login.
+ * Input Params: None
+ * Return Type: void
+ */
+void viewTheListInNotes(void)
+{
+    getString = getLoginCredentials();
+    if (getString == NULL)
+        return;
+
+    FILE *file = fopen("textUserData.txt", "r");
+    if (file == NULL)
+    {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    char currentLine[170];
+    char currentUsername[20];
+    char currentString[150];
+    int flag = 0, i = 1;
+    while (fgets(currentLine, sizeof(currentLine), file) != NULL)
+    {
+        sscanf(currentLine, "%19s\t%149[^\n]s", currentUsername, currentString);
+
+        if (kmpSearch(currentUsername, getString) == 1)
+        {
+            flag = 1;
+            printf("List %d %s: %s\n", i, getString, currentString);
+            i++;
+        }
+    }
+
+    if (flag == 0)
+        printf("No Data Found.\n");
+    fclose(file);
+    return;
+}
+
+/**
+ * Function Name: menuForNoteTaking
+ * Description: Displays the menu options for note-taking.
+ * Input Params: None
+ * Return Type: void
+ */
+void menuForNoteTaking(void)
+{
+    printf("\n\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
+    printf("-- Enter 1 to Add Notes(Check List)\n");
+    printf("-- Enter 2 to To View the Note at top\n");
+    printf("Enter 0 to go back \n  =>");
+}
+
+/**
+ * Function Name: noteTaking
+ * Description: Manages the note-taking functionality by displaying a menu and handling user choices.
+ * Input Params: None
+ * Return Type: void
+ */
+void noteTaking(void)
+{
+    choice = 0;
+    while (true)
+    {
+        menuForNoteTaking();
+        scanf(" %d", &choice);
+
+        switch (choice)
+        {
+        case 0:
+            system("cls");
+            return;
+
+        case 1:
+            addNotes();
+            break;
+
+        case 2:
+            viewTheListInNotes();
+            break;
+
         default:
             printf("Please Enter a Valid Choice\n\n");
             break;
