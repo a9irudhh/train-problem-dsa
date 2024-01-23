@@ -36,4 +36,5 @@ int maxHashedPsswords = 0;
 int historyCount = 0;
 int duplicateDataCount = 0;
 int feedBackCount = 0;
+int nodeCount = 0;
 #endif // LOCALS_H_INCLUDED

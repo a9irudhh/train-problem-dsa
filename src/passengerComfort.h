@@ -53,6 +53,7 @@ typedef struct nodeOfTree
     int dormitoryAvailability;
     double dormitoryRating;
     char description[200];
+    int index;
 } NODE;
 
 // Structure declaration that gives complete info about the tree node
@@ -229,5 +230,8 @@ void addNotesToFile(char *);
 
 // Function for viewing the list of notes of a particular user
 void viewTheListInNotes(void);
+
+//prints the data present in the NODE
+void printDormitoryInfo(NODE *);
 
 #endif // PASSENGERCOMFORT_H_INCLUDED

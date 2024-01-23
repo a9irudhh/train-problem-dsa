@@ -1369,102 +1369,6 @@ void searchForSpotNearPlatform(void)
 }
 
 /**
- * Function Name: searchForSpotNearPlatform
- * Description: Takes user input for a place name and searches for it near any platform.
- *               Guides the user to the platform if the place is found.
- * Input Params: None
- * Return Type: void
- * */
-void bfs(int startPlatform, int endPlatform, int numPlatforms)
-{
-    int *visited = (int *)malloc(sizeof(int) * numPlatforms);
-    int *parent = (int *)malloc(sizeof(int) * numPlatforms);
-
-    for (int i = 0; i < numPlatforms; i++)
-    {
-        visited[i] = 0;
-        parent[i] = -1; // Initialize parent array to -1
-    }
-
-    // Create a queue for BFS
-    int *queue = (int *)malloc(sizeof(int) * numPlatforms);
-    int front = -1, rear = -1;
-
-    visited[startPlatform] = 1;
-    queue[++rear] = startPlatform;
-
-    while (front != rear)
-    {
-        int currentPlatform = queue[++front];
-
-        for (int neighbor = 0; neighbor < numPlatforms; neighbor++)
-        {
-            if (!visited[neighbor] && weightMatrix[currentPlatform][neighbor] != 999999)
-            {
-                visited[neighbor] = 1;
-                parent[neighbor] = currentPlatform;
-                queue[++rear] = neighbor;
-
-                if (neighbor == endPlatform)
-                {
-                    // Path found, print the path and return
-                    printBFSPath(parent, startPlatform, endPlatform);
-                    free(visited);
-                    free(parent);
-                    free(queue);
-                    return;
-                }
-            }
-        }
-    }
-
-    // If BFS completes without finding the destination
-    printf("No path found between Platform %d and Platform %d.\n", startPlatform, endPlatform);
-
-    // Free allocated memory
-    free(visited);
-    free(parent);
-    free(queue);
-}
-
-/**
- * Function Name: printBFSPath
- * Description: Prints the shortest path between two platforms found using Breadth-First Search.
- * Input Params:
- *   - parent: Array representing the parent platform for each platform in the shortest path
- *   - startPlatform: Source platform
- *   - endPlatform: Destination platform
- * Return Type: void
- * */
-void printBFSPath(int *parent, int startPlatform, int endPlatform)
-{
-    // Build the path
-    int numPlatforms = 10;
-    int currentPlatform = endPlatform;
-    int *path = (int *)malloc(sizeof(int) * (numPlatforms));
-    int pathLength = 0;
-
-    while (currentPlatform != -1)
-    {
-        path[pathLength++] = currentPlatform; // Adjust to 1-indexed form
-        currentPlatform = parent[currentPlatform];
-    }
-
-    // Print the path in reverse order
-    printf("Shortest path between Platform %d and Platform %d: ", startPlatform, endPlatform);
-    for (int i = pathLength - 1; i >= 0; i--)
-    {
-        printf("%d", path[i]);
-        if (i > 0)
-            printf(" -> ");
-    }
-
-    printf("\n");
-
-    free(path);
-}
-
-/**
  * Function Name: guideToPlatform
  * Description: Guides the user to a specific platform using Dijkstra's Algorithm or terminates the guide based on user choice.
  * Input Params:
@@ -1559,6 +1463,7 @@ DDT *insertIntoBST(DDT *root, NODE nodeToInsert)
             return NULL; // Return NULL to indicate failure
         }
 
+        root->data->index = nodeCount;
         strcpy(root->data->description, nodeToInsert.description);
         root->data->dormitoryAvailability = nodeToInsert.dormitoryAvailability;
         root->data->dormitoryBedCount = nodeToInsert.dormitoryBedCount;
@@ -1598,6 +1503,7 @@ DDT *insertIntoBST(DDT *root, NODE nodeToInsert)
         return root;   // Return the original root to maintain the tree structure
     }
 
+    newNode->data->index = nodeCount;
     strcpy(newNode->data->description, nodeToInsert.description);
     newNode->data->dormitoryAvailability = nodeToInsert.dormitoryAvailability;
     newNode->data->dormitoryBedCount = nodeToInsert.dormitoryBedCount;
@@ -1613,6 +1519,7 @@ DDT *insertIntoBST(DDT *root, NODE nodeToInsert)
     else
         parent->right = newNode;
 
+    nodeCount++;
     return root;
 }
 
@@ -1637,7 +1544,8 @@ int loadDormitoryDataIntoTree(void)
     while (!feof(fdorm))
     {
 
-        fscanf(fdorm, "%49s\t%d\t%lf\t%d\t%lf\t%199[^\n]s\n",
+        fscanf(fdorm, "%d\t%49s\t%d\t%lf\t%d\t%lf\t%199[^\n]s\n",
+               &data.index,
                data.dormitoryName,
                &data.dormitoryBedCount,
                &data.dormitoryRent,
@@ -1650,6 +1558,74 @@ int loadDormitoryDataIntoTree(void)
 
     fclose(fdorm);
     return SUCCESS;
+}
+
+void printDormitoryInfo(NODE* nodeInfoToPrint)
+{
+    printf("%d\t%49s\t%d\t%lf\t%d\t%lf\t%s\n",
+               nodeInfoToPrint->index,
+            nodeInfoToPrint->dormitoryName,
+               nodeInfoToPrint->dormitoryBedCount,
+               nodeInfoToPrint->dormitoryRent,
+               nodeInfoToPrint->dormitoryAvailability,
+               nodeInfoToPrint->dormitoryRating,
+            nodeInfoToPrint->description);
+}
+/**
+ *Function Name: bfsForDormitoryType
+ *Description: Performs BFS on a tree to find a dormitory with a specific type.
+ * @param Input Params:
+ *   - startNode: The starting node for BFS
+ *   - dormitoryType: The type of dormitory to search for
+ * Return Type: void
+ * */
+DDT *bfsForDormitoryType(DDT *startNode, char *dormitoryType, int numberOfNodes)
+{
+    int *visited = (int *)malloc(numberOfNodes * sizeof(int));
+    DDT **queue = (DDT **)malloc(numberOfNodes * sizeof(DDT *));
+    int front = -1, rear = -1;
+
+    for (int i = 0; i < numberOfNodes; i++)
+    {
+        visited[i] = 0;
+    }
+
+    queue[++rear] = startNode;
+
+    while (front <= rear)
+    {
+        DDT *currentNode = queue[++front];
+
+        if (currentNode != NULL)
+        {
+            // Check if dormitory type matches
+            if (kmpSearch(currentNode->data->description, dormitoryType) == 1)
+            {
+                // Dormitory with the specified type found
+                free(visited);
+                free(queue);
+                return currentNode; // Return the found node
+            }
+
+            // Enqueue left and right children if not visited
+            if (currentNode->left && !visited[currentNode->left->data->index])
+            {
+                visited[currentNode->left->data->index] = 1;
+                queue[++rear] = currentNode->left;
+            }
+
+            if (currentNode->right && !visited[currentNode->right->data->index])
+            {
+                visited[currentNode->right->data->index] = 1;
+                queue[++rear] = currentNode->right;
+            }
+        }
+    }
+
+    // Free allocated memory
+    free(visited);
+    free(queue);
+    return NULL; // Return NULL if the dormitory type is not found
 }
 
 /**
@@ -1667,7 +1643,14 @@ void lookForDormitories(void)
     printf("Enter what kind of Dormitory Are you looking for: ");
     scanf(" %29[^\n]s", dormitoryType);
 
-    
+    DDT* foundNode = bfsForDormitoryType(root, dormitoryType, nodeCount);
+    if(foundNode == NULL)
+    {
+        printf("No Dormitory with %s type found.\n", dormitoryType);
+        return;
+    }
+
+    printDormitoryInfo(foundNode->data);
     return;
 }
 
@@ -1688,7 +1671,7 @@ void getPlatformAssistance(void)
         switch (choice)
         {
         case 0:
-        root = NULL;
+            root = NULL;
             system("cls");
             return;
 
@@ -1715,9 +1698,9 @@ void getPlatformAssistance(void)
 /**
  * Function Name: addNotesToFile
  * Description: Adds a note associated with the user's username to a file.
- * Input Params:   
+ * Input Params:
  *    - char *userName: The username associated with the note.
- * Return Type: 
+ * Return Type:
  *    void
  */
 void addNotesToFile(char *userName)
@@ -1797,6 +1780,7 @@ void addNotes(void)
  * Input Params: None
  * Return Type: void
  */
+
 void viewTheListInNotes(void)
 {
     getString = getLoginCredentials();
@@ -1817,7 +1801,7 @@ void viewTheListInNotes(void)
     while (fgets(currentLine, sizeof(currentLine), file) != NULL)
     {
         sscanf(currentLine, "%19s\t%149[^\n]s", currentUsername, currentString);
-
+        printf("working\n");
         if (kmpSearch(currentUsername, getString) == 1)
         {
             flag = 1;
