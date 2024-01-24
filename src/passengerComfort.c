@@ -405,12 +405,7 @@ void searchForCity(void)
 
     if (strlen(searchString) == 0)
     {
-        // If the search string is empty, display all records
-        for (tindex = 0; tindex < glbCntForTopCities; tindex++)
-        {
-            printf("RATING  REVIEW\n\n");
-            printf("%.1lf\t%s\n", dataToDisplay[tindex].rating, dataToDisplay[tindex].description);
-        }
+        printf("Search String cannot be Empty.\n");
         return;
     }
 
@@ -430,9 +425,9 @@ void searchForCity(void)
         printf("No Cities with name %s\n", searchString);
         return;
     }
+
     for (tindex = 0; tindex < duplicateDataCount; tindex++)
     {
-
         printf("RATING  REVIEW\n\n");
         printf("%.1lf\t%s\n", duplicateDataDisplay[tindex].rating, duplicateDataDisplay[tindex].description);
     }
@@ -1785,7 +1780,6 @@ void addNotes(void)
  * Input Params: None
  * Return Type: void
  */
-
 void viewTheListInNotes(void)
 {
     getString = getLoginCredentials();
@@ -1829,8 +1823,8 @@ void viewTheListInNotes(void)
 void menuForNoteTaking(void)
 {
     printf("\n\t\t\t\t\033[1;36m------------------MENU------------------\033[0m\n\n");
-    printf("-- Enter 1 to Add Notes(Check List)\n");
-    printf("-- Enter 2 to To View the Note at top\n");
+    printf("-- Enter 1 to Add Notes(Kind of Check List)\n");
+    printf("-- Enter 2 to To View the Note of yours.\n");
     printf("Enter 0 to go back \n  =>");
 }
 
