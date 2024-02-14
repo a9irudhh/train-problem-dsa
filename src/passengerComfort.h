@@ -117,6 +117,9 @@ int addFeedback(char *, char *, char *);
 // Function to create a user account
 char *createAccount(void);
 
+// Function to Check if username isnt valid
+int unacceptableUserName(char *);
+
 // Function to get login credentials
 char *getLoginCredentials(void);
 
@@ -194,12 +197,6 @@ int kmpSearch(char *, char *);
 
 // Function to guide the user to a platform
 void guideToPlatform(int);
-
-// Function to perform breadth-first search
-void bfs(int, int, int);
-
-// Function to print the BFS path
-void printBFSPath(int *, int, int);
 
 // Function to recommend dormitory based on User Search
 void lookForDormitories(void);

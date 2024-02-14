@@ -6,9 +6,9 @@
 
 // Variable for take choice input from the user
 // Can be used for:
-//  -- switch cases 
-//  -- menu options
-//  -- Any other scenario where user is prompted for a choice to input
+//  - switch cases 
+//  - menu options
+//  - Any other scenario where user is prompted for a choice to input
 int choice = 0;
 
 // The return status of success or failure of any function can be

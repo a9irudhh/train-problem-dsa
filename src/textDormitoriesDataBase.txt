@@ -7,7 +7,7 @@
 7   Dorm7	85	480.00	11	3.9	Budget-friendly dormitory with clean facilities
 8   Dorm8	105	560.00	9	4.5	Eco-friendl dormitory surrounded by nature
 9   Dorm9	75	420.00	14	3.7	Quaint dormitory with a vintage charm
-10   Dorm10	115	580.00	6	4.1	Spacious dormitory with panoramic city views
+10   Dorm10	115	580.00	6	4.0	Spacious dormitory with panoramic city views
 11   Dorm11	88	510.00	13	3.6	Welcoming dormitory with communal study spaces
 12   Dorm12	92	540.00	8	4.2	Vibrant dormitory with a lively social scene
 13   Dorm13	78	470.00	10	3.8	Simple and practica dormitory for students

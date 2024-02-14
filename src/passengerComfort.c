@@ -544,6 +544,43 @@ unsigned long getHashValueDjb2(char *tempPassword)
 }
 
 /**
+ * Function Name: unacceptableUserName
+ * Description: Checks if a given username is present in the list of unaccepted words.
+ *              Uses DJB2 hash values for efficient comparison.
+ * Input Params:
+ *   - char *userName: Pointer to the username to be checked.
+ * Return Type: int
+ *   - Returns 0 if the username is found in the list of unaccepted words.
+ *   - Returns 1 if the username is not present in the list.
+ * */
+int unacceptableUserName(char *userName)
+{
+    FILE *file;
+    file = fopen("unacceptedWords.txt", "r");
+
+    // Check if the file opened successfully
+    if (file == NULL)
+    {
+        printf("Could not open the file.\n");
+        return 1;
+    }
+
+    // Read the file line by line
+    unsigned long int temp = getHashValueDjb2(userName);
+    unsigned long int currentNumber;
+    while (fscanf(file, "%lu", &currentNumber) == 1)
+    {
+        // Check if the current line's number is the target number
+        if (currentNumber == temp)
+        {
+            fclose(file);
+            return FAILURE;
+        }
+    }
+    fclose(file);
+    return SUCCESS;
+}
+/**
  * Function Name: createAccount
  * Description: Handles the process of creating a user account.
  * Input Params: None
@@ -553,25 +590,31 @@ char *createAccount(void)
 {
     system("cls");
     unsigned long secreteNumber;
-moreThan2Words:
+notValidUsername:
     printf("Please Enter Your Username[single word]: ");
     scanf(" %19[^\n]s", userName); // Corrected format specifier
 
     userName[strcspn(userName, "\n")] = 0;
 
-    // count = 0;
+    status = unacceptableUserName(userName);
+    if (status != SUCCESS)
+    {
+        printf("Such Usernames are not Accepted. Try Entering something different\n");
+        goto notValidUsername;
+    }
+
     count = countWords(userName);
     if (count > 1)
     {
         printf("Don't include spaces in Username\n");
-        goto moreThan2Words;
+        goto notValidUsername;
     }
 
     status = searchInFile(userName);
-    if (status == 1)
+    if (status == SUCCESS)
     {
         printf("Username already exists.\n");
-        goto moreThan2Words;
+        goto notValidUsername;
     }
     printf("Enter password(Max 7 characters): ");
     int i = 0;
@@ -586,7 +629,7 @@ moreThan2Words:
 
     secreteNumber = getHashValueDjb2(password);
     status = addHashedPasswordToFile(userName, secreteNumber);
-    if (status != 1)
+    if (status != SUCCESS)
     {
         printf("Password Database Updation error\n");
         return NULL;
@@ -720,6 +763,7 @@ unsigned long long createHash(char *str, int length)
 /**
  * Function Name: binarySearchForUnrecUser
  * Description: Performs binary search for an unmatched hashed password in the password database.
+ *
  * Input Params:
  *   - unsigned long match: The hashed password to be searched for
  * Return Type: int - Returns SUCCESS (1) if the hashed password is found, otherwise FAILURE (0).
@@ -754,7 +798,7 @@ int rabinKarpSearchInitiater(char *userName)
     unsigned long secreteNumber;
     strcpy(tempUsername, userName);
     status = searchInFile(userName);
-    if (status != 1)
+    if (status != SUCCESS)
     {
         printf("Account with Username %s doesnt exist\n", tempUsername);
         return FAILURE;
@@ -776,7 +820,7 @@ int rabinKarpSearchInitiater(char *userName)
 
     mergeSortForPassword();
     status = binarySearchForUnrecUser(secreteNumber);
-    if (status != 1)
+    if (status != SUCCESS)
     {
         printf("\nPassowrd Didn't Match.");
         return FAILURE;
@@ -796,10 +840,18 @@ char *getLoginCredentials(void)
     printf("Please Enter Your User name: ");
     scanf(" %19[^\n]s", userName);
 
+notAccepted:
+    status = unacceptableUserName(userName);
+    if (status != SUCCESS)
+    {
+        printf("Such Usernames are not Accepted. Try Entering something different\n");
+        goto notAccepted;
+    }
+
     while (getchar() != '\n')
         ;
     status = rabinKarpSearchInitiater(userName);
-    if (status != 1)
+    if (status != SUCCESS)
         return NULL;
 
     return userName;
@@ -927,7 +979,7 @@ void insertionSort(int number)
 void viewTopNcities(void)
 {
     status = loadFileCityPromotions();
-    if (status != 1)
+    if (status != SUCCESS)
     {
         printf("Load Failed\n");
         return;
@@ -1349,7 +1401,7 @@ void searchForSpotNearPlatform(void)
 
     getchar();
     status = knuthMorrisPrattToSearchForPlace(cityName);
-    if (status == -1)
+    if (status == FAILURE)
     {
         return;
     }
@@ -1407,7 +1459,7 @@ void guideToPlatform(int guideToPlatform)
 void touristSpotNearPlatform(void)
 {
     status = loadSpotsNearPlatformFile();
-    if (status != 1)
+    if (status != SUCCESS)
     {
         printf("File Open Error.\n");
         return;
@@ -1639,7 +1691,7 @@ DDT *bfsForDormitoryType(DDT *startNode, char *dormitoryType, int numberOfNodes)
 void lookForDormitories(void)
 {
     status = loadDormitoryDataIntoTree();
-    if (status != 1)
+    if (status != SUCCESS)
         return;
 
     printf("Enter what kind of Dormitory Are you looking for: ");
@@ -1803,7 +1855,7 @@ void viewTheListInNotes(void)
         if (kmpSearch(currentUsername, getString) == 1)
         {
             flag = 1;
-            printf("List %d %s: %s\n", i, getString, currentString);
+            printf("\nList %d %s: %s\n", i, getString, currentString);
             i++;
         }
     }
